@@ -79,7 +79,6 @@ Everything below is in the sidebar of a project.
 | **Prompt Research** | Find the questions people ask AI about a market and which sites get cited in the answers.                         |
 | **Prompt Tracking** | Track whether and how often a brand is mentioned or cited in AI answers, over time.                               |
 | **Prompt Explorer** | Ask any prompt across ChatGPT, Claude, Gemini and Perplexity side by side, and see the answers and their sources. |
-| **Brand Lookup**    | See how AI search cites any brand name or domain.                                                                 |
 
 ### Reporting and AI
 
