@@ -57,7 +57,10 @@ const pendingTask = {
 } as const;
 const liveAnswer = {
   status: "fulfilled",
-  value: { status: "completed", result: { markdown: "OpenSEO", sources: [] } },
+  value: {
+    status: "completed",
+    result: { markdown: "SerpSurfers", sources: [] },
+  },
 } as const;
 const providerFailure = {
   status: "failed",
@@ -110,10 +113,10 @@ describe("AI answer collection", () => {
       status: "completed",
       result: {
         markdown:
-          "Try **Ahrefs** or OpenSEO [1](https://openseo.so/pricing?utm_source=chatgpt)",
+          "Try **Ahrefs** or SerpSurfers [1](https://serpsurfers.com/pricing?utm_source=chatgpt)",
         sources: [
           {
-            url: "https://openseo.so/pricing?utm_source=chatgpt",
+            url: "https://serpsurfers.com/pricing?utm_source=chatgpt",
             title: "Pricing",
           },
         ],
@@ -128,12 +131,16 @@ describe("AI answer collection", () => {
     });
     const evidence = await repo.getEvidence(["answer-0"]);
     expect(evidence.sources).toMatchObject([
-      { url: "https://openseo.so/pricing", domain: "openseo.so", position: 1 },
+      {
+        url: "https://serpsurfers.com/pricing",
+        domain: "serpsurfers.com",
+        position: 1,
+      },
     ]);
     expect(evidence.matches).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          domain: "openseo.so",
+          domain: "serpsurfers.com",
           own: true,
           mentioned: true,
           cited: true,
@@ -247,9 +254,9 @@ describe("AI answer collection", () => {
               type: "message",
               sections: [
                 {
-                  text: "Try OpenSEO.",
+                  text: "Try SerpSurfers.",
                   annotations: [
-                    { url: "https://openseo.so/", title: "OpenSEO" },
+                    { url: "https://serpsurfers.com/", title: "SerpSurfers" },
                   ],
                 },
               ],
@@ -276,10 +283,10 @@ describe("AI answer collection", () => {
     );
     expect(await repo.getObservation("answer-0")).toMatchObject({
       status: "completed",
-      answerMarkdown: "Try OpenSEO.",
+      answerMarkdown: "Try SerpSurfers.",
     });
     expect((await repo.getEvidence(["answer-0"])).sources).toMatchObject([
-      { url: "https://openseo.so/", domain: "openseo.so" },
+      { url: "https://serpsurfers.com/", domain: "serpsurfers.com" },
     ]);
     expect(await repo.getObservation("answer-1")).toMatchObject({
       status: "failed",
@@ -411,7 +418,7 @@ describe("AI answer collection", () => {
   it("fails answers that never arrived and finishes the run as partial", async () => {
     dataforseo.fetchTaskResult.mockResolvedValue({
       status: "completed",
-      result: { markdown: "OpenSEO", sources: [] },
+      result: { markdown: "SerpSurfers", sources: [] },
     });
     await collectAiRound(runId, [pendingTask], true);
 

@@ -112,7 +112,7 @@ export function AuthPageCard({
       <div className="space-y-3 text-center">
         <img
           src="/transparent-logo.png"
-          alt="OpenSEO"
+          alt="SerpSurfers"
           className="mx-auto size-10 rounded-lg"
         />
         <div>

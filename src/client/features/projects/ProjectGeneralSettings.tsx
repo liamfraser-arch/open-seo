@@ -13,6 +13,7 @@ import {
   clearLastProjectId,
   getLastProjectId,
 } from "@/client/lib/active-project";
+import { ClientAccessSection } from "@/client/features/portal/ClientAccessSection";
 import { toastInitialAudit } from "@/client/features/projects/initialAuditToast";
 import { archiveProject, updateProject } from "@/serverFunctions/projects";
 import type { ProjectSummary } from "./types";
@@ -34,6 +35,7 @@ export function ProjectGeneralSettings({ projectId }: { projectId: string }) {
           <div className="space-y-8">
             {/* key resets the form's local state when switching between projects */}
             <GeneralSection key={project.id} project={project} />
+            <ClientAccessSection projectId={project.id} />
             <DangerSection project={project} canArchive={projects.length > 1} />
           </div>
         );

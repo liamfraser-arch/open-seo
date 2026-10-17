@@ -37,7 +37,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        title: "OpenSEO",
+        title: "SerpSurfers",
       },
       {
         charSet: "utf-8",

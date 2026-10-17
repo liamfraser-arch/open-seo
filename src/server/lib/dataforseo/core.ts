@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { AppError } from "@/server/lib/errors";
 import { getRequiredEnvValue } from "@/server/lib/runtime-env";
 import type { ErrorCode } from "@/shared/error-codes";
@@ -45,6 +46,17 @@ function formatDataforseoErrorPayload(value: unknown): string {
   return text.length > MAX_DATAFORSEO_ERROR_PAYLOAD_LENGTH
     ? `${text.slice(0, MAX_DATAFORSEO_ERROR_PAYLOAD_LENGTH)}... [truncated]`
     : text;
+}
+
+const errorBodySchema = z.object({ status_message: z.string().min(1) });
+
+function readStatusMessage(rawText: string): string | null {
+  try {
+    const parsed = errorBodySchema.safeParse(JSON.parse(rawText));
+    return parsed.success ? parsed.data.status_message : null;
+  } catch {
+    return null;
+  }
 }
 
 function formatDataforseoRequestPath(url: RequestInfo): string {
@@ -127,9 +139,12 @@ function createAuthenticatedFetch(
             : response.status === 401
               ? "DATAFORSEO_AUTH_FAILED"
               : "INTERNAL_ERROR";
+      // DataForSEO says why in the body (e.g. "Please verify your account"),
+      // which is the only actionable part of a 4xx for the user.
+      const reason = readStatusMessage(rawText);
       const error = new AppError(
         code,
-        `DataForSEO HTTP ${response.status} on ${path}`,
+        `DataForSEO HTTP ${response.status} on ${path}${reason ? `: ${reason}` : ""}`,
         {
           provider: "dataforseo",
           providerStatus: String(response.status),

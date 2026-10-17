@@ -30,6 +30,8 @@ import { Route as AuthenticatedSubscribeRouteImport } from './routes/_authentica
 import { Route as AuthenticatedYcRouteImport } from './routes/_authenticated.yc'
 import { Route as AcceptInvitationIdRouteImport } from './routes/accept-invitation.$id'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as PortalIndexRouteImport } from './routes/portal.index'
+import { Route as PortalProjectIdRouteImport } from './routes/portal.$projectId'
 import { Route as RReportIdRouteImport } from './routes/r/$reportId'
 import { Route as AppBillingFixPaymentRouteImport } from './routes/_app/billing_.fix-payment'
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
@@ -50,6 +52,7 @@ import { Route as AppPProjectIdBrandLookupRouteImport } from './routes/_app/p/$p
 import { Route as AppPProjectIdContextRouteImport } from './routes/_app/p/$projectId/context'
 import { Route as AppPProjectIdDomainRouteImport } from './routes/_app/p/$projectId/domain'
 import { Route as AppPProjectIdKeywordsRouteImport } from './routes/_app/p/$projectId/keywords'
+import { Route as AppPProjectIdLocalGridRouteImport } from './routes/_app/p/$projectId/local-grid'
 import { Route as AppPProjectIdPromptExplorerRouteImport } from './routes/_app/p/$projectId/prompt-explorer'
 import { Route as AppPProjectIdRankTrackingRouteImport } from './routes/_app/p/$projectId/rank-tracking'
 import { Route as AppPProjectIdSamRouteImport } from './routes/_app/p/$projectId/sam'
@@ -61,12 +64,15 @@ import { Route as ApiGscOauthCallbackRouteImport } from './routes/api/gsc/oauth/
 import { Route as AppPProjectIdAiVisibilityIndexRouteImport } from './routes/_app/p/$projectId/ai-visibility/index'
 import { Route as AppPProjectIdAiVisibilityResearchRouteImport } from './routes/_app/p/$projectId/ai-visibility/research'
 import { Route as AppPProjectIdAuditIndexRouteImport } from './routes/_app/p/$projectId/audit/index'
+import { Route as AppPProjectIdLocalGridIndexRouteImport } from './routes/_app/p/$projectId/local-grid/index'
+import { Route as AppPProjectIdLocalGridGridIdRouteImport } from './routes/_app/p/$projectId/local-grid/$gridId'
 import { Route as AppPProjectIdRankTrackingIndexRouteImport } from './routes/_app/p/$projectId/rank-tracking/index'
 import { Route as AppPProjectIdRankTrackingConfigIdRouteImport } from './routes/_app/p/$projectId/rank-tracking/$configId'
 import { Route as AppPProjectIdReportsIndexRouteImport } from './routes/_app/p/$projectId/reports/index'
 import { Route as AppPProjectIdReportsReportIdRouteImport } from './routes/_app/p/$projectId/reports/$reportId'
 import { Route as AppPProjectIdReportsTemplatesRouteImport } from './routes/_app/p/$projectId/reports/templates'
 import { Route as AppPProjectIdSettingsIndexRouteImport } from './routes/_app/p/$projectId/settings/index'
+import { Route as AppPProjectIdSettingsClientReportRouteImport } from './routes/_app/p/$projectId/settings/client-report'
 import { Route as AppPProjectIdSettingsContextRouteImport } from './routes/_app/p/$projectId/settings/context'
 import { Route as AppPProjectIdSettingsIntegrationsRouteImport } from './routes/_app/p/$projectId/settings/integrations'
 import { Route as AppPProjectIdAiVisibilityPromptsPromptIdRouteImport } from './routes/_app/p/$projectId/ai-visibility/prompts/$promptId'
@@ -176,6 +182,16 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
   path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalIndexRoute = PortalIndexRouteImport.update({
+  id: '/portal/',
+  path: '/portal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalProjectIdRoute = PortalProjectIdRouteImport.update({
+  id: '/portal/$projectId',
+  path: '/portal/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RReportIdRoute = RReportIdRouteImport.update({
   id: '/r/$reportId',
   path: '/r/$reportId',
@@ -279,6 +295,11 @@ const AppPProjectIdKeywordsRoute = AppPProjectIdKeywordsRouteImport.update({
   path: '/keywords',
   getParentRoute: () => AppPProjectIdRouteRoute,
 } as any)
+const AppPProjectIdLocalGridRoute = AppPProjectIdLocalGridRouteImport.update({
+  id: '/local-grid',
+  path: '/local-grid',
+  getParentRoute: () => AppPProjectIdRouteRoute,
+} as any)
 const AppPProjectIdPromptExplorerRoute =
   AppPProjectIdPromptExplorerRouteImport.update({
     id: '/prompt-explorer',
@@ -339,6 +360,18 @@ const AppPProjectIdAuditIndexRoute = AppPProjectIdAuditIndexRouteImport.update({
   path: '/audit/',
   getParentRoute: () => AppPProjectIdRouteRoute,
 } as any)
+const AppPProjectIdLocalGridIndexRoute =
+  AppPProjectIdLocalGridIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppPProjectIdLocalGridRoute,
+  } as any)
+const AppPProjectIdLocalGridGridIdRoute =
+  AppPProjectIdLocalGridGridIdRouteImport.update({
+    id: '/$gridId',
+    path: '/$gridId',
+    getParentRoute: () => AppPProjectIdLocalGridRoute,
+  } as any)
 const AppPProjectIdRankTrackingIndexRoute =
   AppPProjectIdRankTrackingIndexRouteImport.update({
     id: '/',
@@ -373,6 +406,12 @@ const AppPProjectIdSettingsIndexRoute =
   AppPProjectIdSettingsIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AppPProjectIdSettingsRoute,
+  } as any)
+const AppPProjectIdSettingsClientReportRoute =
+  AppPProjectIdSettingsClientReportRouteImport.update({
+    id: '/client-report',
+    path: '/client-report',
     getParentRoute: () => AppPProjectIdSettingsRoute,
   } as any)
 const AppPProjectIdSettingsContextRoute =
@@ -419,7 +458,9 @@ export interface FileRoutesByFullPath {
   '/yc': typeof AuthenticatedYcRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
+  '/portal/$projectId': typeof PortalProjectIdRoute
   '/r/$reportId': typeof RReportIdRoute
+  '/portal/': typeof PortalIndexRoute
   '/p/$projectId': typeof AppPProjectIdRouteRouteWithChildren
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
@@ -438,6 +479,7 @@ export interface FileRoutesByFullPath {
   '/p/$projectId/context': typeof AppPProjectIdContextRoute
   '/p/$projectId/domain': typeof AppPProjectIdDomainRoute
   '/p/$projectId/keywords': typeof AppPProjectIdKeywordsRoute
+  '/p/$projectId/local-grid': typeof AppPProjectIdLocalGridRouteWithChildren
   '/p/$projectId/prompt-explorer': typeof AppPProjectIdPromptExplorerRoute
   '/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingRouteWithChildren
   '/p/$projectId/sam': typeof AppPProjectIdSamRoute
@@ -448,13 +490,16 @@ export interface FileRoutesByFullPath {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/p/$projectId/': typeof AppPProjectIdIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
   '/p/$projectId/reports/templates': typeof AppPProjectIdReportsTemplatesRoute
+  '/p/$projectId/settings/client-report': typeof AppPProjectIdSettingsClientReportRoute
   '/p/$projectId/settings/context': typeof AppPProjectIdSettingsContextRoute
   '/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/p/$projectId/ai-visibility/': typeof AppPProjectIdAiVisibilityIndexRoute
   '/p/$projectId/audit/': typeof AppPProjectIdAuditIndexRoute
+  '/p/$projectId/local-grid/': typeof AppPProjectIdLocalGridIndexRoute
   '/p/$projectId/rank-tracking/': typeof AppPProjectIdRankTrackingIndexRoute
   '/p/$projectId/reports/': typeof AppPProjectIdReportsIndexRoute
   '/p/$projectId/settings/': typeof AppPProjectIdSettingsIndexRoute
@@ -479,7 +524,9 @@ export interface FileRoutesByTo {
   '/yc': typeof AuthenticatedYcRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
+  '/portal/$projectId': typeof PortalProjectIdRoute
   '/r/$reportId': typeof RReportIdRoute
+  '/portal': typeof PortalIndexRoute
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
@@ -504,13 +551,16 @@ export interface FileRoutesByTo {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/p/$projectId': typeof AppPProjectIdIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
   '/p/$projectId/reports/templates': typeof AppPProjectIdReportsTemplatesRoute
+  '/p/$projectId/settings/client-report': typeof AppPProjectIdSettingsClientReportRoute
   '/p/$projectId/settings/context': typeof AppPProjectIdSettingsContextRoute
   '/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/p/$projectId/ai-visibility': typeof AppPProjectIdAiVisibilityIndexRoute
   '/p/$projectId/audit': typeof AppPProjectIdAuditIndexRoute
+  '/p/$projectId/local-grid': typeof AppPProjectIdLocalGridIndexRoute
   '/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingIndexRoute
   '/p/$projectId/reports': typeof AppPProjectIdReportsIndexRoute
   '/p/$projectId/settings': typeof AppPProjectIdSettingsIndexRoute
@@ -539,8 +589,10 @@ export interface FileRoutesById {
   '/_authenticated/yc': typeof AuthenticatedYcRoute
   '/accept-invitation/$id': typeof AcceptInvitationIdRoute
   '/api/health': typeof ApiHealthRoute
+  '/portal/$projectId': typeof PortalProjectIdRoute
   '/r/$reportId': typeof RReportIdRoute
   '/_app/': typeof AppIndexRoute
+  '/portal/': typeof PortalIndexRoute
   '/_app/p/$projectId': typeof AppPProjectIdRouteRouteWithChildren
   '/_app/billing_/fix-payment': typeof AppBillingFixPaymentRoute
   '/_app/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
@@ -559,6 +611,7 @@ export interface FileRoutesById {
   '/_app/p/$projectId/context': typeof AppPProjectIdContextRoute
   '/_app/p/$projectId/domain': typeof AppPProjectIdDomainRoute
   '/_app/p/$projectId/keywords': typeof AppPProjectIdKeywordsRoute
+  '/_app/p/$projectId/local-grid': typeof AppPProjectIdLocalGridRouteWithChildren
   '/_app/p/$projectId/prompt-explorer': typeof AppPProjectIdPromptExplorerRoute
   '/_app/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingRouteWithChildren
   '/_app/p/$projectId/sam': typeof AppPProjectIdSamRoute
@@ -569,13 +622,16 @@ export interface FileRoutesById {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/_app/p/$projectId/': typeof AppPProjectIdIndexRoute
   '/_app/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/_app/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/_app/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/_app/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
   '/_app/p/$projectId/reports/templates': typeof AppPProjectIdReportsTemplatesRoute
+  '/_app/p/$projectId/settings/client-report': typeof AppPProjectIdSettingsClientReportRoute
   '/_app/p/$projectId/settings/context': typeof AppPProjectIdSettingsContextRoute
   '/_app/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/_app/p/$projectId/ai-visibility/': typeof AppPProjectIdAiVisibilityIndexRoute
   '/_app/p/$projectId/audit/': typeof AppPProjectIdAuditIndexRoute
+  '/_app/p/$projectId/local-grid/': typeof AppPProjectIdLocalGridIndexRoute
   '/_app/p/$projectId/rank-tracking/': typeof AppPProjectIdRankTrackingIndexRoute
   '/_app/p/$projectId/reports/': typeof AppPProjectIdReportsIndexRoute
   '/_app/p/$projectId/settings/': typeof AppPProjectIdSettingsIndexRoute
@@ -603,7 +659,9 @@ export interface FileRouteTypes {
     | '/yc'
     | '/accept-invitation/$id'
     | '/api/health'
+    | '/portal/$projectId'
     | '/r/$reportId'
+    | '/portal/'
     | '/p/$projectId'
     | '/billing/fix-payment'
     | '/help/dataforseo-api-key'
@@ -622,6 +680,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/context'
     | '/p/$projectId/domain'
     | '/p/$projectId/keywords'
+    | '/p/$projectId/local-grid'
     | '/p/$projectId/prompt-explorer'
     | '/p/$projectId/rank-tracking'
     | '/p/$projectId/sam'
@@ -632,13 +691,16 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/p/$projectId/'
     | '/p/$projectId/ai-visibility/research'
+    | '/p/$projectId/local-grid/$gridId'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
     | '/p/$projectId/reports/templates'
+    | '/p/$projectId/settings/client-report'
     | '/p/$projectId/settings/context'
     | '/p/$projectId/settings/integrations'
     | '/p/$projectId/ai-visibility/'
     | '/p/$projectId/audit/'
+    | '/p/$projectId/local-grid/'
     | '/p/$projectId/rank-tracking/'
     | '/p/$projectId/reports/'
     | '/p/$projectId/settings/'
@@ -663,7 +725,9 @@ export interface FileRouteTypes {
     | '/yc'
     | '/accept-invitation/$id'
     | '/api/health'
+    | '/portal/$projectId'
     | '/r/$reportId'
+    | '/portal'
     | '/billing/fix-payment'
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
@@ -688,13 +752,16 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/p/$projectId'
     | '/p/$projectId/ai-visibility/research'
+    | '/p/$projectId/local-grid/$gridId'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
     | '/p/$projectId/reports/templates'
+    | '/p/$projectId/settings/client-report'
     | '/p/$projectId/settings/context'
     | '/p/$projectId/settings/integrations'
     | '/p/$projectId/ai-visibility'
     | '/p/$projectId/audit'
+    | '/p/$projectId/local-grid'
     | '/p/$projectId/rank-tracking'
     | '/p/$projectId/reports'
     | '/p/$projectId/settings'
@@ -722,8 +789,10 @@ export interface FileRouteTypes {
     | '/_authenticated/yc'
     | '/accept-invitation/$id'
     | '/api/health'
+    | '/portal/$projectId'
     | '/r/$reportId'
     | '/_app/'
+    | '/portal/'
     | '/_app/p/$projectId'
     | '/_app/billing_/fix-payment'
     | '/_app/help/dataforseo-api-key'
@@ -742,6 +811,7 @@ export interface FileRouteTypes {
     | '/_app/p/$projectId/context'
     | '/_app/p/$projectId/domain'
     | '/_app/p/$projectId/keywords'
+    | '/_app/p/$projectId/local-grid'
     | '/_app/p/$projectId/prompt-explorer'
     | '/_app/p/$projectId/rank-tracking'
     | '/_app/p/$projectId/sam'
@@ -752,13 +822,16 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/_app/p/$projectId/'
     | '/_app/p/$projectId/ai-visibility/research'
+    | '/_app/p/$projectId/local-grid/$gridId'
     | '/_app/p/$projectId/rank-tracking/$configId'
     | '/_app/p/$projectId/reports/$reportId'
     | '/_app/p/$projectId/reports/templates'
+    | '/_app/p/$projectId/settings/client-report'
     | '/_app/p/$projectId/settings/context'
     | '/_app/p/$projectId/settings/integrations'
     | '/_app/p/$projectId/ai-visibility/'
     | '/_app/p/$projectId/audit/'
+    | '/_app/p/$projectId/local-grid/'
     | '/_app/p/$projectId/rank-tracking/'
     | '/_app/p/$projectId/reports/'
     | '/_app/p/$projectId/settings/'
@@ -777,7 +850,9 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   AcceptInvitationIdRoute: typeof AcceptInvitationIdRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  PortalProjectIdRoute: typeof PortalProjectIdRoute
   RReportIdRoute: typeof RReportIdRoute
+  PortalIndexRoute: typeof PortalIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiAutumnSplatRoute: typeof ApiAutumnSplatRoute
   STokenOgDotpngRoute: typeof STokenOgDotpngRoute
@@ -936,6 +1011,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal/': {
+      id: '/portal/'
+      path: '/portal'
+      fullPath: '/portal/'
+      preLoaderRoute: typeof PortalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/$projectId': {
+      id: '/portal/$projectId'
+      path: '/portal/$projectId'
+      fullPath: '/portal/$projectId'
+      preLoaderRoute: typeof PortalProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/r/$reportId': {
       id: '/r/$reportId'
       path: '/r/$reportId'
@@ -1076,6 +1165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPProjectIdKeywordsRouteImport
       parentRoute: typeof AppPProjectIdRouteRoute
     }
+    '/_app/p/$projectId/local-grid': {
+      id: '/_app/p/$projectId/local-grid'
+      path: '/local-grid'
+      fullPath: '/p/$projectId/local-grid'
+      preLoaderRoute: typeof AppPProjectIdLocalGridRouteImport
+      parentRoute: typeof AppPProjectIdRouteRoute
+    }
     '/_app/p/$projectId/prompt-explorer': {
       id: '/_app/p/$projectId/prompt-explorer'
       path: '/prompt-explorer'
@@ -1153,6 +1249,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPProjectIdAuditIndexRouteImport
       parentRoute: typeof AppPProjectIdRouteRoute
     }
+    '/_app/p/$projectId/local-grid/': {
+      id: '/_app/p/$projectId/local-grid/'
+      path: '/'
+      fullPath: '/p/$projectId/local-grid/'
+      preLoaderRoute: typeof AppPProjectIdLocalGridIndexRouteImport
+      parentRoute: typeof AppPProjectIdLocalGridRoute
+    }
+    '/_app/p/$projectId/local-grid/$gridId': {
+      id: '/_app/p/$projectId/local-grid/$gridId'
+      path: '/$gridId'
+      fullPath: '/p/$projectId/local-grid/$gridId'
+      preLoaderRoute: typeof AppPProjectIdLocalGridGridIdRouteImport
+      parentRoute: typeof AppPProjectIdLocalGridRoute
+    }
     '/_app/p/$projectId/rank-tracking/': {
       id: '/_app/p/$projectId/rank-tracking/'
       path: '/'
@@ -1193,6 +1303,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/p/$projectId/settings/'
       preLoaderRoute: typeof AppPProjectIdSettingsIndexRouteImport
+      parentRoute: typeof AppPProjectIdSettingsRoute
+    }
+    '/_app/p/$projectId/settings/client-report': {
+      id: '/_app/p/$projectId/settings/client-report'
+      path: '/client-report'
+      fullPath: '/p/$projectId/settings/client-report'
+      preLoaderRoute: typeof AppPProjectIdSettingsClientReportRouteImport
       parentRoute: typeof AppPProjectIdSettingsRoute
     }
     '/_app/p/$projectId/settings/context': {
@@ -1260,6 +1377,22 @@ const AppPProjectIdAiVisibilityRouteWithChildren =
     AppPProjectIdAiVisibilityRouteChildren,
   )
 
+interface AppPProjectIdLocalGridRouteChildren {
+  AppPProjectIdLocalGridGridIdRoute: typeof AppPProjectIdLocalGridGridIdRoute
+  AppPProjectIdLocalGridIndexRoute: typeof AppPProjectIdLocalGridIndexRoute
+}
+
+const AppPProjectIdLocalGridRouteChildren: AppPProjectIdLocalGridRouteChildren =
+  {
+    AppPProjectIdLocalGridGridIdRoute: AppPProjectIdLocalGridGridIdRoute,
+    AppPProjectIdLocalGridIndexRoute: AppPProjectIdLocalGridIndexRoute,
+  }
+
+const AppPProjectIdLocalGridRouteWithChildren =
+  AppPProjectIdLocalGridRoute._addFileChildren(
+    AppPProjectIdLocalGridRouteChildren,
+  )
+
 interface AppPProjectIdRankTrackingRouteChildren {
   AppPProjectIdRankTrackingConfigIdRoute: typeof AppPProjectIdRankTrackingConfigIdRoute
   AppPProjectIdRankTrackingIndexRoute: typeof AppPProjectIdRankTrackingIndexRoute
@@ -1278,12 +1411,15 @@ const AppPProjectIdRankTrackingRouteWithChildren =
   )
 
 interface AppPProjectIdSettingsRouteChildren {
+  AppPProjectIdSettingsClientReportRoute: typeof AppPProjectIdSettingsClientReportRoute
   AppPProjectIdSettingsContextRoute: typeof AppPProjectIdSettingsContextRoute
   AppPProjectIdSettingsIntegrationsRoute: typeof AppPProjectIdSettingsIntegrationsRoute
   AppPProjectIdSettingsIndexRoute: typeof AppPProjectIdSettingsIndexRoute
 }
 
 const AppPProjectIdSettingsRouteChildren: AppPProjectIdSettingsRouteChildren = {
+  AppPProjectIdSettingsClientReportRoute:
+    AppPProjectIdSettingsClientReportRoute,
   AppPProjectIdSettingsContextRoute: AppPProjectIdSettingsContextRoute,
   AppPProjectIdSettingsIntegrationsRoute:
     AppPProjectIdSettingsIntegrationsRoute,
@@ -1302,6 +1438,7 @@ interface AppPProjectIdRouteRouteChildren {
   AppPProjectIdContextRoute: typeof AppPProjectIdContextRoute
   AppPProjectIdDomainRoute: typeof AppPProjectIdDomainRoute
   AppPProjectIdKeywordsRoute: typeof AppPProjectIdKeywordsRoute
+  AppPProjectIdLocalGridRoute: typeof AppPProjectIdLocalGridRouteWithChildren
   AppPProjectIdPromptExplorerRoute: typeof AppPProjectIdPromptExplorerRoute
   AppPProjectIdRankTrackingRoute: typeof AppPProjectIdRankTrackingRouteWithChildren
   AppPProjectIdSamRoute: typeof AppPProjectIdSamRoute
@@ -1323,6 +1460,7 @@ const AppPProjectIdRouteRouteChildren: AppPProjectIdRouteRouteChildren = {
   AppPProjectIdContextRoute: AppPProjectIdContextRoute,
   AppPProjectIdDomainRoute: AppPProjectIdDomainRoute,
   AppPProjectIdKeywordsRoute: AppPProjectIdKeywordsRoute,
+  AppPProjectIdLocalGridRoute: AppPProjectIdLocalGridRouteWithChildren,
   AppPProjectIdPromptExplorerRoute: AppPProjectIdPromptExplorerRoute,
   AppPProjectIdRankTrackingRoute: AppPProjectIdRankTrackingRouteWithChildren,
   AppPProjectIdSamRoute: AppPProjectIdSamRoute,
@@ -1412,7 +1550,9 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OpenaiAppsChallengeRoute,
   AcceptInvitationIdRoute: AcceptInvitationIdRoute,
   ApiHealthRoute: ApiHealthRoute,
+  PortalProjectIdRoute: PortalProjectIdRoute,
   RReportIdRoute: RReportIdRoute,
+  PortalIndexRoute: PortalIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiAutumnSplatRoute: ApiAutumnSplatRoute,
   STokenOgDotpngRoute: STokenOgDotpngRoute,

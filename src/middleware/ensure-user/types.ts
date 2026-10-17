@@ -17,5 +17,8 @@ export type EnsuredUserContext = {
   // Delegated modes (Cloudflare Access / local) have one implicit user per
   // org and no member rows, so they resolve as "owner".
   role: string;
+  // Set only for portal clients (role "client"): the projects they may read.
+  // Clients are denied everywhere except the read-only portal functions.
+  portalProjectIds?: string[];
   project?: EnsuredProject;
 };

@@ -8,5 +8,5 @@ export function getAgentSetupPrompt(origin: string) {
   const instructions = installerSkill
     .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "")
     .trim();
-  return instructions.replaceAll("https://app.openseo.so", origin);
+  return instructions.replaceAll("https://app.serpsurfers.com", origin);
 }

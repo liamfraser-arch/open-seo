@@ -21,12 +21,8 @@ vi.mock("@/server/auth/default-hosted-organization", () => ({
   resolveExistingActiveHostedOrganization: vi.fn(),
 }));
 
-vi.mock("@/middleware/ensure-user/cloudflareAccess", () => ({
-  resolveCloudflareAccessContext: vi.fn(),
-}));
-
-vi.mock("@/middleware/ensure-user/delegated", () => ({
-  resolveLocalNoAuthContext: vi.fn(),
+vi.mock("@/middleware/ensure-user/resolve", () => ({
+  resolveUserContextFromHeaders: vi.fn(),
 }));
 
 vi.mock("@/server/mcp/server", async () => {

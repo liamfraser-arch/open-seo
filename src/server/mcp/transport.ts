@@ -9,8 +9,7 @@ import {
 } from "@modelcontextprotocol/server";
 import { getHostedBaseUrl } from "@/lib/auth";
 import { MCP_SCOPE } from "@/lib/oauth-resource";
-import { resolveCloudflareAccessContext } from "@/middleware/ensure-user/cloudflareAccess";
-import { resolveLocalNoAuthContext } from "@/middleware/ensure-user/delegated";
+import { resolveUserContextFromHeaders } from "@/middleware/ensure-user/resolve";
 import {
   createWorkersOAuthMcpProps,
   hostedWorkersOAuthMcpPropsSchema,
@@ -98,7 +97,7 @@ async function handleLegacyJsonRequest(request: Request, props: McpProps) {
   // buffers the response and lets the finally below tear everything down
   // before the request completes. JSON mode silently drops server-to-client
   // requests (sampling/elicitation) and would hang the buffered response —
-  // no OpenSEO tool issues them.
+  // no SerpSurfers tool issues them.
   const server = createOpenSeoMcpServer(props);
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
@@ -242,10 +241,9 @@ export async function handleSelfHostedOpenSeoMcpRequest(
     return new Response(null, { headers: MCP_CORS_HEADERS });
   }
 
-  const identity =
-    authMode === "local_noauth"
-      ? await resolveLocalNoAuthContext()
-      : await resolveCloudflareAccessContext(request.headers);
+  // The guarded resolver refuses portal clients: the MCP server gives full
+  // access to the workspace, which clients must never have.
+  const identity = await resolveUserContextFromHeaders(request.headers);
   const props = createWorkersOAuthMcpProps({
     userId: identity.userId,
     userEmail: identity.userEmail,

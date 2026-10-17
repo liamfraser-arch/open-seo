@@ -3,6 +3,10 @@ import { NavTab, NavTabs } from "@/client/components/NavTabs";
 const tabs = [
   { to: "/p/$projectId/settings" as const, label: "General", exact: true },
   { to: "/p/$projectId/settings/integrations" as const, label: "Integrations" },
+  {
+    to: "/p/$projectId/settings/client-report" as const,
+    label: "Client report",
+  },
 ];
 
 export function SettingsTabs({ projectId }: { projectId: string }) {

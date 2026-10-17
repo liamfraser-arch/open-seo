@@ -7,10 +7,10 @@ describe("DataForSEO answer evidence", () => {
       {
         datetime: "2026-09-30 18:41:09 +00:00",
         markdown:
-          "- **OpenSEO** is open source. [openseo.so](https://openseo.so/blog?utm_source=chatgpt.com) See [SerpBear on GitHub](https://github.com/towfiqi/serpbear).",
+          "- **SerpSurfers** is open source. [serpsurfers.com](https://serpsurfers.com/blog?utm_source=chatgpt.com) See [SerpBear on GitHub](https://github.com/towfiqi/serpbear).",
         sources: [
           {
-            url: "https://openseo.so/blog?utm_source=chatgpt.com",
+            url: "https://serpsurfers.com/blog?utm_source=chatgpt.com",
             title: "Blog",
           },
           { url: "javascript:alert(1)" },
@@ -20,11 +20,11 @@ describe("DataForSEO answer evidence", () => {
       "chatgpt",
     );
     expect(result).toMatchObject({
-      answerText: "OpenSEO is open source.  See SerpBear on GitHub.",
+      answerText: "SerpSurfers is open source.  See SerpBear on GitHub.",
       citations: [
         {
-          url: "https://openseo.so/blog",
-          domain: "openseo.so",
+          url: "https://serpsurfers.com/blog",
+          domain: "serpsurfers.com",
           title: "Blog",
           position: 1,
         },
@@ -62,7 +62,7 @@ describe("DataForSEO answer evidence", () => {
   it("treats a results page without an AI Overview as no answer", () => {
     expect(
       parseDataforseoAnswer(
-        { items: [{ type: "organic", url: "https://openseo.so/" }] },
+        { items: [{ type: "organic", url: "https://serpsurfers.com/" }] },
         "google_ai_overview",
       ),
     ).toMatchObject({ answerMarkdown: null, citations: [] });

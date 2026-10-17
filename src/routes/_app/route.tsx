@@ -1,5 +1,12 @@
-import { Outlet, createFileRoute, useParams } from "@tanstack/react-router";
+import {
+  Outlet,
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getPortalSession } from "@/serverFunctions/portal";
 import { useHostedAuthRouteGuard } from "@/client/features/auth/useHostedAuthRouteGuard";
 import { prefetchBillingAccount } from "@/client/features/billing/billingAccountQuery";
 import { FreePlanBanner } from "@/client/features/billing/FreePlanBanner";
@@ -18,6 +25,17 @@ function AppRouteLayout() {
   const authGate = useHostedAuthRouteGuard();
   useOnboardingRedirect();
   const { projectId } = useParams({ strict: false });
+  const navigate = useNavigate();
+
+  // Portal clients have no business in the main app; send them to theirs.
+  const portalSession = useQuery({
+    queryKey: ["portalSession"],
+    queryFn: () => getPortalSession(),
+  });
+  const isClient = portalSession.data?.isClient === true;
+  useEffect(() => {
+    if (isClient) void navigate({ to: "/portal", replace: true });
+  }, [isClient, navigate]);
   // The shell paints at once, and only the page waits for the session check,
   // so a full load shows the sidebar and a page skeleton instead of a spinner.
   const ready = authGate.canRenderAuthenticatedContent;
@@ -38,7 +56,7 @@ function AppRouteLayout() {
         ) : undefined
       }
     >
-      {ready ? <Outlet /> : <SkeletonPage />}
+      {ready && !isClient ? <Outlet /> : <SkeletonPage />}
     </AuthenticatedAppLayout>
   );
 }

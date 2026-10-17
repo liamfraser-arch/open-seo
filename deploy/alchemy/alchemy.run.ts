@@ -274,6 +274,8 @@ const dataEnv = {
   CRAWLER_ACCESS_SECRET: optionalSecret("CRAWLER_ACCESS_SECRET"),
   GOOGLE_CLIENT_ID: optionalVar("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: optionalSecret("GOOGLE_CLIENT_SECRET"),
+  GOOGLE_MAPS_API_KEY: optionalVar("GOOGLE_MAPS_API_KEY"),
+  GOOGLE_MAPS_MAP_ID: optionalVar("GOOGLE_MAPS_MAP_ID"),
   OPENROUTER_API_KEY: optionalSecret("OPENROUTER_API_KEY"),
   OPENROUTER_MODEL: optionalVar("OPENROUTER_MODEL"),
   CONTEXT_API_KEY: optionalSecret("CONTEXT_API_KEY"),
@@ -330,7 +332,7 @@ export default Alchemy.Stack(
       if (!authUrl) {
         return yield* Effect.die(
           new Error(
-            "Set BETTER_AUTH_URL (https://app.openseo.so) in .env.production.",
+            "Set BETTER_AUTH_URL (https://app.serpsurfers.com) in .env.production.",
           ),
         );
       }

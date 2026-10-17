@@ -57,17 +57,22 @@ describe("researchAiPrompts", () => {
         { key: "general", name: "General", archived: false },
       ],
       brands: [
-        { own: true, name: "OpenSEO", domain: "openseo.so", aliases: [] },
+        {
+          own: true,
+          name: "SerpSurfers",
+          domain: "serpsurfers.com",
+          aliases: [],
+        },
       ],
       prompts: [{ text: "Is Moz a good SEO tool?", archived: false }],
     });
     mentionsSearch.mockResolvedValue([
       {
         question: "what is the most accurate seo tool?",
-        answer: "Ahrefs or OpenSEO.",
+        answer: "Ahrefs or SerpSurfers.",
         ai_search_volume: 40,
         sources: [
-          { domain: "www.openseo.so", url: "https://www.openseo.so/a" },
+          { domain: "www.serpsurfers.com", url: "https://serpsurfers.com/a" },
         ],
       },
       {

@@ -11,8 +11,7 @@ import {
 } from "@/server/mcp/transport";
 
 const selfHostedAuthMocks = vi.hoisted(() => ({
-  resolveCloudflareAccessContext: vi.fn(),
-  resolveLocalNoAuthContext: vi.fn(),
+  resolveUserContextFromHeaders: vi.fn(),
   createOpenSeoMcpServer: vi.fn(),
   createMcpHandler: vi.fn(),
 }));
@@ -34,13 +33,9 @@ vi.mock("@/server/auth/default-hosted-organization", () => ({
     hostedOrganizationMocks.resolveExistingActiveHostedOrganization,
 }));
 
-vi.mock("@/middleware/ensure-user/cloudflareAccess", () => ({
-  resolveCloudflareAccessContext:
-    selfHostedAuthMocks.resolveCloudflareAccessContext,
-}));
-
-vi.mock("@/middleware/ensure-user/delegated", () => ({
-  resolveLocalNoAuthContext: selfHostedAuthMocks.resolveLocalNoAuthContext,
+vi.mock("@/middleware/ensure-user/resolve", () => ({
+  resolveUserContextFromHeaders:
+    selfHostedAuthMocks.resolveUserContextFromHeaders,
 }));
 
 vi.mock("@/lib/auth", () => ({
@@ -51,14 +46,14 @@ vi.mock("@/server/mcp/server", () => ({
   createOpenSeoMcpServer: (props?: unknown) => {
     selfHostedAuthMocks.createOpenSeoMcpServer(props);
     return new McpServer({
-      name: "OpenSEO MCP",
-      title: "OpenSEO",
+      name: "SerpSurfers MCP",
+      title: "SerpSurfers",
       version: "0.0.11",
       description: "SEO research tools for AI agents",
-      websiteUrl: "https://openseo.so",
+      websiteUrl: "https://serpsurfers.com",
       icons: [
         {
-          src: "https://openseo.so/android-chrome-512x512.png",
+          src: "https://serpsurfers.com/android-chrome-512x512.png",
           mimeType: "image/png",
           sizes: ["512x512"],
         },
@@ -135,41 +130,21 @@ function hostedProps(scopes: string[] = ["mcp"]) {
 }
 
 describe("handleSelfHostedOpenSeoMcpRequest", () => {
+  const identity = {
+    userId: "cloudflare-user",
+    userEmail: "person@example.com",
+    organizationId: "delegated-cloudflare-user",
+  };
+
   beforeEach(() => {
-    selfHostedAuthMocks.resolveLocalNoAuthContext.mockResolvedValue({
-      userId: "local-admin",
-      userEmail: "admin@localhost",
-      organizationId: "delegated-local-admin",
-    });
-    selfHostedAuthMocks.resolveCloudflareAccessContext.mockResolvedValue({
-      userId: "cloudflare-user",
-      userEmail: "person@example.com",
-      organizationId: "delegated-cloudflare-user",
-    });
+    selfHostedAuthMocks.resolveUserContextFromHeaders.mockResolvedValue(
+      identity,
+    );
   });
 
-  it.each([
-    [
-      "local_noauth" as const,
-      selfHostedAuthMocks.resolveLocalNoAuthContext,
-      {
-        userId: "local-admin",
-        userEmail: "admin@localhost",
-        organizationId: "delegated-local-admin",
-      },
-    ],
-    [
-      "cloudflare_access" as const,
-      selfHostedAuthMocks.resolveCloudflareAccessContext,
-      {
-        userId: "cloudflare-user",
-        userEmail: "person@example.com",
-        organizationId: "delegated-cloudflare-user",
-      },
-    ],
-  ])(
+  it.each(["local_noauth" as const, "cloudflare_access" as const])(
     "accepts %s MCP requests with the resolved identity",
-    async (authMode, resolver, identity) => {
+    async (authMode) => {
       const response = await handleSelfHostedOpenSeoMcpRequest(
         createMcpRequest(),
         authMode,
@@ -182,7 +157,6 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
         "application/json",
       );
       expect(response.headers.get("connection")).not.toBe("keep-alive");
-      expect(resolver).toHaveBeenCalled();
       expect(selfHostedAuthMocks.createOpenSeoMcpServer).toHaveBeenCalledWith({
         [MCP_AUTH_CONTEXT_PROP]: {
           ...identity,
@@ -200,6 +174,23 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
     },
   );
 
+  // Portal clients are refused by the resolver, so they never reach any tool.
+  it("never serves a request the resolver refuses", async () => {
+    selfHostedAuthMocks.resolveUserContextFromHeaders.mockRejectedValue(
+      new Error("FORBIDDEN"),
+    );
+
+    await expect(
+      handleSelfHostedOpenSeoMcpRequest(
+        createMcpRequest(),
+        "cloudflare_access",
+        {},
+        ctx,
+      ),
+    ).rejects.toThrow("FORBIDDEN");
+    expect(selfHostedAuthMocks.createOpenSeoMcpServer).not.toHaveBeenCalled();
+  });
+
   it("answers OPTIONS preflight without resolving an auth context", async () => {
     const response = await handleSelfHostedOpenSeoMcpRequest(
       new Request("https://open-seo.test/mcp", { method: "OPTIONS" }),
@@ -211,7 +202,7 @@ describe("handleSelfHostedOpenSeoMcpRequest", () => {
     expect(response.status).toBe(200);
     expect(await response.text()).toBe("");
     expect(
-      selfHostedAuthMocks.resolveCloudflareAccessContext,
+      selfHostedAuthMocks.resolveUserContextFromHeaders,
     ).not.toHaveBeenCalled();
     expect(selfHostedAuthMocks.createOpenSeoMcpServer).not.toHaveBeenCalled();
   });

@@ -143,9 +143,10 @@ export function Sidebar({
         <Link
           to="/"
           onClick={() => setOpenMobile(false)}
-          className="px-1 pb-2 text-base font-semibold text-sidebar-foreground"
+          className="flex items-center gap-2 px-1 pb-2 text-base font-semibold text-sidebar-foreground"
         >
-          OpenSEO
+          <img src="/transparent-logo.png" alt="" className="size-6" />
+          SerpSurfers
         </Link>
         <ProjectSwitcher
           activeProjectId={projectId}

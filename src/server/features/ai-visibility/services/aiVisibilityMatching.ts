@@ -106,7 +106,7 @@ export function aiPromptIsBranded(
   const domain = brand.domain
     .replace(/^www\./i, "")
     .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  // Domain labels must end here: openseo.so.evil.example is another site.
+  // Domain labels must end here: serpsurfers.com.evil.example is another site.
   return (
     !!domain &&
     new RegExp(

@@ -3,6 +3,7 @@ import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
 import { AppError } from "@/server/lib/errors";
 import { validateTeamDomain } from "@/shared/selfhost-checks";
 import { classifyAccessVerificationError } from "./accessTokenErrors";
+import { PortalRepository } from "@/server/features/portal/PortalRepository";
 import { resolveSharedWorkspaceContext } from "./delegated";
 import type { EnsuredUserContext } from "./types";
 
@@ -94,5 +95,25 @@ export async function resolveCloudflareAccessContext(
     throw new AppError("UNAUTHENTICATED");
   }
 
-  return resolveSharedWorkspaceContext(userId, userEmail);
+  const context = await resolveSharedWorkspaceContext(userId, userEmail);
+
+  // ADMIN_EMAILS (comma separated) names who gets the full app. Anyone else
+  // the Access policy lets in is a portal client, limited to the projects they
+  // were added to, or is refused. Unset keeps the old rule: everyone admitted
+  // is an admin, except emails that were added as portal clients.
+  const email = userEmail.toLowerCase();
+  const adminEmails = (env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+  if (adminEmails.includes(email)) return context;
+
+  const portalProjectIds = await PortalRepository.projectIdsForEmail(email);
+  if (portalProjectIds.length > 0) {
+    return { ...context, role: "client", portalProjectIds };
+  }
+  if (adminEmails.length > 0) {
+    throw new AppError("FORBIDDEN", "This account has no access.");
+  }
+  return context;
 }

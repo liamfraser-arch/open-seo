@@ -12,7 +12,7 @@ const applicationContext = {
   baseUrl: "https://open-seo.test",
 };
 
-describe("OpenSEO tool auth context", () => {
+describe("SerpSurfers tool auth context", () => {
   it("prefers standard OAuth client metadata over the props fallback", () => {
     const props = createWorkersOAuthMcpProps({
       ...applicationContext,

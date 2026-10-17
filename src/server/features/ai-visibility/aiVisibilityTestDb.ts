@@ -36,7 +36,7 @@ export async function createAiVisibilityTestDb() {
       INSERT INTO organization (id, name, slug, created_at)
         VALUES ('organization', 'Organization', 'organization', 0);
       INSERT INTO projects (id, organization_id, name, domain)
-        VALUES ('project', 'organization', 'OpenSEO', 'openseo.so');
+        VALUES ('project', 'organization', 'SerpSurfers', 'serpsurfers.com');
     `);
   return { client, db, runBatch: batch, seedProject };
 }

@@ -49,7 +49,7 @@ function runManualCheck() {
       keywords,
       devices: "desktop",
       serpDepth: 10,
-      domain: "openseo.so",
+      domain: "serpsurfers.com",
       locationCode: 2840,
       languageCode: "en",
       runId: "run_1",

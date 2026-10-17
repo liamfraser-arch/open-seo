@@ -48,7 +48,7 @@ describe("report social image access", () => {
     const response = await handleReportSocialImage(TOKEN);
     expect(response.status).toBe(302);
     expect(response.headers.get("Location")).toBe(
-      "https://openseo.so/social-card.jpg",
+      "https://serpsurfers.com/social-card.jpg",
     );
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(response.headers.get("Referrer-Policy")).toBe("no-referrer");

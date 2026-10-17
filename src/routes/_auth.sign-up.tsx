@@ -91,7 +91,7 @@ function SignUpPage() {
           );
         }
         const result = await authClient.signUp.email({
-          name: email.split("@")[0] || "OpenSEO User",
+          name: email.split("@")[0] || "SerpSurfers User",
           email,
           password: value.password,
           callbackURL: verificationCallbackURL.toString(),
@@ -157,7 +157,7 @@ function SignUpPage() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 By signing up, you agree to our{" "}
                 <a
-                  href="https://openseo.so/terms-and-conditions"
+                  href="https://serpsurfers.com/terms-and-conditions"
                   target="_blank"
                   rel="noreferrer"
                   className="text-foreground underline underline-offset-2 hover:text-foreground/80 transition-colors"
@@ -166,7 +166,7 @@ function SignUpPage() {
                 </a>{" "}
                 and{" "}
                 <a
-                  href="https://openseo.so/privacy"
+                  href="https://serpsurfers.com/privacy"
                   target="_blank"
                   rel="noreferrer"
                   className="text-foreground underline underline-offset-2 hover:text-foreground/80 transition-colors"

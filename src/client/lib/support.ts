@@ -1,1 +1,1 @@
-export const SUPPORT_EMAIL = "support@openseo.so";
+export const SUPPORT_EMAIL = "support@serpsurfers.com";

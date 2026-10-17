@@ -47,6 +47,7 @@ import {
   resolveLlmMentionsLimit,
 } from "@/server/lib/dataforseo/ai";
 import type { LlmResponseModelSlug } from "@/server/lib/dataforseo/llm-models";
+import { LOCAL_SERP_TASK_USD } from "@/shared/local-grid";
 import {
   fetchAiTrackingLiveAnswer,
   postAiTrackingTasks,
@@ -149,9 +150,6 @@ export function llmResponseUsd(
 // more. Local Finder bills every page of 10 at the first-page rate ($0.02 at
 // depth 100).
 const LOCAL_SERP_PAGE_USD = 0.002;
-// SERP Google Maps, queued at high priority. measured: task_post bills $0.0012
-// per task at depth 20.
-const LOCAL_SERP_TASK_USD = 0.0012;
 
 type ProviderUsdEstimator<I> = (input: I) => number;
 

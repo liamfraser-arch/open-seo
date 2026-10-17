@@ -7,7 +7,7 @@ import {
   ownedAiDomain,
 } from "./aiVisibilityMatching";
 
-const brand = { name: "OpenSEO", domain: "openseo.so" };
+const brand = { name: "SerpSurfers", domain: "serpsurfers.com" };
 function answer(text: string, citedHosts: string[] = []): ParsedAiAnswer {
   return {
     answerMarkdown: text,
@@ -24,12 +24,15 @@ function answer(text: string, citedHosts: string[] = []): ParsedAiAnswer {
 
 describe("brand mentions", () => {
   it.each([
-    ["OpenSEO is an open-source toolkit.", 0],
-    ["OpenSEO's MCP supports research.", 0],
-    ["Try openseo.so for audits.", 4],
-    ["OpenSEOsomething and MyOpenSEO are different names.", null],
-    ["Links: https://openseo.so/OpenSEO and www.openseo.so/OpenSEO", null],
-    ["Email OpenSEO@example.com or help@openseo.so.", null],
+    ["SerpSurfers is an open-source toolkit.", 0],
+    ["SerpSurfers's MCP supports research.", 0],
+    ["Try serpsurfers.com for audits.", 4],
+    ["SerpSurferssomething and MySerpSurfers are different names.", null],
+    [
+      "Links: https://serpsurfers.com/SerpSurfers and www.serpsurfers.com/SerpSurfers",
+      null,
+    ],
+    ["Email SerpSurfers@example.com or help@serpsurfers.com.", null],
     ["An unrelated toolkit has similar features.", null],
   ])("%s", (text, firstMention) => {
     expect(matchAiBrand(answer(text), brand)).toMatchObject({
@@ -69,7 +72,7 @@ describe("brand mentions", () => {
 });
 
 describe("brand citations", () => {
-  it.each(["openseo.so", "www.openseo.so", "docs.openseo.so"])(
+  it.each(["serpsurfers.com", "www.serpsurfers.com", "docs.serpsurfers.com"])(
     "counts a cited page on %s",
     (host) => {
       expect(matchAiBrand(answer("Other tools.", [host]), brand)).toMatchObject(
@@ -77,30 +80,31 @@ describe("brand citations", () => {
       );
     },
   );
-  it.each(["openseo.so.evil.example", "notopenseo.so", "openseo.com"])(
-    "does not count %s",
-    (host) => {
-      expect(ownedAiDomain(host, brand.domain)).toBe(false);
-      expect(matchAiBrand(answer("Other tools.", [host]), brand).cited).toBe(
-        false,
-      );
-    },
-  );
+  it.each([
+    "serpsurfers.com.evil.example",
+    "notserpsurfers.com",
+    "serpsurfers.net",
+  ])("does not count %s", (host) => {
+    expect(ownedAiDomain(host, brand.domain)).toBe(false);
+    expect(matchAiBrand(answer("Other tools.", [host]), brand).cited).toBe(
+      false,
+    );
+  });
 });
 
 describe("branded prompt cohort", () => {
   it.each([
-    "What is OpenSEO?",
-    "Review https://openseo.so",
-    "What does www.openseo.so offer?",
-    "Review docs.openseo.so/mcp",
+    "What is SerpSurfers?",
+    "Review https://serpsurfers.com",
+    "What does www.serpsurfers.com offer?",
+    "Review docs.serpsurfers.com/mcp",
   ])("includes %s", (prompt) => {
     expect(aiPromptIsBranded(prompt, brand)).toBe(true);
   });
   it.each([
     "Best open source SEO tools?",
-    "Review https://openseo.so.evil.example",
-    "Review https://notopenseo.so",
+    "Review https://serpsurfers.com.evil.example",
+    "Review https://notserpsurfers.com",
   ])("excludes %s", (prompt) => {
     expect(aiPromptIsBranded(prompt, brand)).toBe(false);
   });

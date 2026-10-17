@@ -11,6 +11,10 @@ declare namespace Cloudflare {
     // Context.dev key: the rendering fallback when Browser Run fails or is
     // blocked, and the only renderer on Docker.
     CONTEXT_API_KEY?: string;
+    // Browser key for the local grid map (Maps JavaScript + Places APIs).
+    // Unset, the grid renders without a map.
+    GOOGLE_MAPS_API_KEY?: string;
+    GOOGLE_MAPS_MAP_ID?: string;
     OAUTH_KV: KVNamespace;
 
     // Durable Object backing the SAM in-app agent (see wrangler.jsonc).
@@ -32,6 +36,10 @@ declare namespace Cloudflare {
     BYPASS_EMAIL_VERIFICATION?: string;
     TEAM_DOMAIN?: string;
     POLICY_AUD?: string;
+    // Comma-separated emails that get the full app in cloudflare_access mode.
+    ADMIN_EMAILS?: string;
+    // local_noauth only: act as this portal client to test what they can reach.
+    LOCAL_PREVIEW_AS_CLIENT?: string;
     POSTHOG_PUBLIC_KEY?: string;
     POSTHOG_HOST?: string;
     BETTER_AUTH_SECRET?: string;

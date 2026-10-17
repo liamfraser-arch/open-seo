@@ -288,7 +288,7 @@ describe("RankTrackingService.triggerAutoCheck", () => {
     projectId: "project_1",
     billingCustomer: {
       userId: "user_1",
-      userEmail: "user@openseo.so",
+      userEmail: "user@serpsurfers.com",
       organizationId: "org_1",
       projectId: "project_1",
     },
