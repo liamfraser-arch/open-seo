@@ -217,17 +217,17 @@ Keep keys in `.env.local` (git-ignored). Never commit them.
 
 ## Deploying
 
-For clients to sign in, deploy to Cloudflare and manage Access yourself.
+For clients to sign in, deploy to Cloudflare and manage Access yourself, on your own domain.
 
-1. Follow [`docs/SELF_HOSTING_CLOUDFLARE.md`](./docs/SELF_HOSTING_CLOUDFLARE.md) to provision Workers, D1, KV and R2 (works on Cloudflare's free plan; R2 needs a payment method on file).
-2. Create a self-hosted Access application for your hostname with an **Allow: Everyone** policy and **One-time PIN** login, and put its `TEAM_DOMAIN` and `POLICY_AUD` in `.env.selfhost`. (The one-command deploy otherwise locks Access to a fixed email list, so adding a client would need a redeploy.)
-3. Set `ADMIN_EMAILS` to your own address.
-4. Add each client's email in the app. No redeploy needed.
-5. Send them the app URL.
+1. `pnpm alchemy login`, then `pnpm alchemy cloudflare bootstrap` (once). The domain's zone must be on the same Cloudflare account. Cloudflare's free plan works; R2 needs a payment method on file.
+2. In Cloudflare Zero Trust, create a self-hosted Access application for your hostname with an **Allow: Everyone** policy and **One-time PIN** login. Copy its AUD tag and your team domain.
+3. Create `.env.selfhost` from `deploy/.env.selfhost.example` and set `DATAFORSEO_API_KEY`, `TEAM_DOMAIN`, `POLICY_AUD`, `CUSTOM_DOMAIN` (for example `app.serpsurfers.com`) and `ADMIN_EMAILS`.
+4. `pnpm deploy:selfhost --yes`. The deploy refuses to run if `ADMIN_EMAILS` is missing, because without it everyone Access admits would be an admin.
+5. Add each client's email in the app. No redeploy needed. Then send them the app URL.
 
-[`docs/CLIENT_PORTAL.md`](./docs/CLIENT_PORTAL.md) has the full steps. After the first deploy, sign in with a second email you control as a test client, since the real Access login can't be tested locally.
+[`docs/CLIENT_PORTAL.md`](./docs/CLIENT_PORTAL.md) has the detailed steps. After the first deploy, sign in with a second email you control as a test client, since the real Access login can't be tested locally. A deployed database starts empty, so local projects and reports don't carry over.
 
-A Docker setup also exists for private use: [`docs/SELF_HOSTING_DOCKER.md`](./docs/SELF_HOSTING_DOCKER.md). It runs with login disabled, so it is not suitable for clients.
+The simple Cloudflare guide is [`docs/SELF_HOSTING_CLOUDFLARE.md`](./docs/SELF_HOSTING_CLOUDFLARE.md). A Docker setup also exists for private use ([`docs/SELF_HOSTING_DOCKER.md`](./docs/SELF_HOSTING_DOCKER.md)), but it runs with login disabled, so it is not suitable for clients.
 
 ## Costs
 

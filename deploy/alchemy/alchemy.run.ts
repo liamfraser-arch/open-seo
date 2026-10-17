@@ -300,6 +300,9 @@ const dataEnv = {
   // Alchemy reconciles worker vars on every deploy, so the telemetry opt-out
   // must live in the env file — a dashboard-set var would be wiped.
   OPENSEO_TELEMETRY_DISABLED: optionalVar("OPENSEO_TELEMETRY_DISABLED"),
+  // Who gets the full app in Access mode; everyone else is a portal client or
+  // refused. See docs/CLIENT_PORTAL.md.
+  ADMIN_EMAILS: optionalVar("ADMIN_EMAILS"),
 };
 
 export default Alchemy.Stack(
@@ -431,10 +434,18 @@ export default Alchemy.Stack(
       },
     }).pipe(Alchemy.RemovalPolicy.retain(prod));
 
+    // Optional: serve a self-host stage on your own hostname, for example
+    // app.serpsurfers.com. Its zone must be on this Cloudflare account.
+    const customDomain = yield* optionalVar("CUSTOM_DOMAIN");
+
     const app = yield* Cloudflare.Worker("open-seo", {
       name: workerName(stage),
       // Prod serves the real domains; the zone is inferred from the hostname.
-      domain: prod ? ["app.openseo.so", "www.app.openseo.so"] : undefined,
+      domain: prod
+        ? ["app.openseo.so", "www.app.openseo.so"]
+        : customDomain
+          ? [customDomain]
+          : undefined,
       // Prebuilt worker from `vite build` (@cloudflare/vite-plugin). The entry
       // exports the DO + WorkflowEntrypoint classes (re-exported by
       // src/server.ts), which `bundle: false` requires. Sibling chunks under

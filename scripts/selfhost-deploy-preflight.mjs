@@ -60,6 +60,29 @@ if (managedAccess && !env.ACCESS_ALLOWED_EMAILS) {
   );
 }
 
+// With a hand-managed Access application anyone it admits can sign in, so the
+// app needs ADMIN_EMAILS to tell admins from clients. Unset, everyone it admits
+// would be an admin.
+if (!managedAccess && !env.ADMIN_EMAILS) {
+  fail(
+    `${em("ADMIN_EMAILS")} is not set in ${envFile}. You manage the Access application`,
+    "yourself (TEAM_DOMAIN and POLICY_AUD are set), so anyone it admits can sign in,",
+    "and without ADMIN_EMAILS every one of them would get the full app.",
+    "",
+    `Set ${em("ADMIN_EMAILS")}=you@example.com (comma-separated). See docs/CLIENT_PORTAL.md.`,
+  );
+}
+// The Access application the deploy creates only covers the workers.dev
+// address, so a custom domain needs your own application.
+if (env.CUSTOM_DOMAIN && managedAccess) {
+  fail(
+    `${em("CUSTOM_DOMAIN")} is set, but the Access application the deploy creates only`,
+    "covers the workers.dev address. Create your own Access application for that",
+    `hostname and set ${em("TEAM_DOMAIN")} and ${em("POLICY_AUD")} in ${envFile}.`,
+    "See docs/CLIENT_PORTAL.md.",
+  );
+}
+
 // An explicit API token bypasses login profiles entirely.
 if (!process.env.CLOUDFLARE_API_TOKEN) {
   const profileName = process.env.ALCHEMY_PROFILE || "default";
