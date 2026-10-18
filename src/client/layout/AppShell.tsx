@@ -104,6 +104,13 @@ export function AuthenticatedAppLayout({
     isSeoApiKeyConfigured === false &&
     !showMissingSeoApiKeyModal;
 
+  // Present mode is shown to clients: no sidebar, banners or setup modals.
+  if (/^\/p\/[^/]+\/present\/?$/.test(location.pathname)) {
+    return (
+      <div className="h-[100dvh] overflow-auto bg-background">{children}</div>
+    );
+  }
+
   return (
     <SidebarProvider className="h-[100dvh] min-h-0 overflow-hidden">
       <Sidebar

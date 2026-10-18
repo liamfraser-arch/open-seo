@@ -11,4 +11,6 @@ export * from "./gsc.schema";
 export * from "./telemetry.schema";
 export * from "./ai-visibility.schema";
 export * from "./local-grid.schema";
+export * from "./citations.schema";
+export * from "./prospects.schema";
 export * from "./portal.schema";

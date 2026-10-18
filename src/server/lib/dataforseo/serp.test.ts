@@ -208,6 +208,14 @@ describe("rank check task queue", () => {
         position: 3,
         url: "https://www.example.com/page",
         serpFeatures: ["organic"],
+        topResults: [
+          {
+            position: 3,
+            url: "https://www.example.com/page",
+            domain: "www.example.com",
+            title: null,
+          },
+        ],
       },
     });
   });

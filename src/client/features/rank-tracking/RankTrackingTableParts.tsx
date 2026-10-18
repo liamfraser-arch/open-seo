@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/client/components/ui/badge";
 import { exportRows } from "@/client/lib/exportRows";
+import { SerpPreview, type SerpPreviewTarget } from "./SerpPreview";
 import { captureClientEvent } from "@/client/lib/posthog";
 import { formatLocationLabel } from "@/shared/keyword-locations";
 import type {
@@ -56,9 +57,17 @@ export function SerpFeatureTags({ features }: { features: string[] }) {
 
 export function DeviceRankCell({
   result,
+  serp,
 }: {
   result: RankTrackingDeviceResult;
+  /** Where the results behind this position can be fetched on hover. */
+  serp?: SerpPreviewTarget;
 }) {
+  const cell = <RankCellContent result={result} />;
+  return serp ? <SerpPreview target={serp}>{cell}</SerpPreview> : cell;
+}
+
+function RankCellContent({ result }: { result: RankTrackingDeviceResult }) {
   const { position, previousPosition } = result;
 
   // Nothing at all

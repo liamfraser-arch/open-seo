@@ -356,6 +356,34 @@ export const rankSnapshots = pgTable(
   ],
 );
 
+// The top organic Google results seen when a keyword was checked, so a
+// position can be shown in context. One row per result, for the same
+// (run, keyword, device) as the snapshot it belongs to.
+export const rankSnapshotResults = pgTable(
+  "rank_snapshot_results",
+  {
+    runId: text("run_id")
+      .notNull()
+      .references(() => rankCheckRuns.id, { onDelete: "cascade" }),
+    trackingKeywordId: text("tracking_keyword_id").notNull(),
+    device: text("device", { enum: ["desktop", "mobile"] }).notNull(),
+    position: integer("position").notNull(),
+    url: text("url").notNull(),
+    domain: text("domain"),
+    title: text("title"),
+  },
+  (table) => [
+    primaryKey({
+      columns: [
+        table.runId,
+        table.trackingKeywordId,
+        table.device,
+        table.position,
+      ],
+    }),
+  ],
+);
+
 // Dashboard activation milestones. Organization-scoped: MCP OAuth grants are
 // user-level, so any member connecting an external MCP client satisfies the
 // milestone for the whole organization. Timestamps are first-occurrence only

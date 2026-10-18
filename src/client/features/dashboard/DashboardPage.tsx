@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Link2, Settings } from "lucide-react";
+import { Link2, Presentation, Settings } from "lucide-react";
 import { EmptyState } from "@/client/components/EmptyState";
 import { Button } from "@/client/components/ui/button";
 import {
@@ -170,14 +170,27 @@ export function DashboardPage({
               Search visibility, links and site health in one place.
             </p>
           </div>
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to="/p/$projectId/settings" params={{ projectId }} />}
-          >
-            <Settings />
-            Project settings
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              nativeButton={false}
+              render={
+                <Link to="/p/$projectId/present" params={{ projectId }} />
+              }
+            >
+              <Presentation />
+              Present to client
+            </Button>
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={
+                <Link to="/p/$projectId/settings" params={{ projectId }} />
+              }
+            >
+              <Settings />
+              Project settings
+            </Button>
+          </div>
         </div>
 
         <WorkspaceMergeBanner />

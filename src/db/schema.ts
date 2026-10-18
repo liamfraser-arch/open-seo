@@ -12,6 +12,8 @@ import * as sqliteGsc from "./gsc.schema";
 import * as sqliteTelemetry from "./telemetry.schema";
 import * as sqliteAiVisibility from "./ai-visibility.schema";
 import * as sqliteLocalGrid from "./local-grid.schema";
+import * as sqliteCitations from "./citations.schema";
+import * as sqliteProspects from "./prospects.schema";
 import * as sqlitePortal from "./portal.schema";
 import * as pgApp from "./pg/app.schema";
 import * as pgProjectContext from "./pg/project-context.schema";
@@ -26,6 +28,8 @@ import * as pgGsc from "./pg/gsc.schema";
 import * as pgTelemetry from "./pg/telemetry.schema";
 import * as pgAiVisibility from "./pg/ai-visibility.schema";
 import * as pgLocalGrid from "./pg/local-grid.schema";
+import * as pgCitations from "./pg/citations.schema";
+import * as pgProspects from "./pg/prospects.schema";
 import * as pgPortal from "./pg/portal.schema";
 
 // Canonical schema barrel. Repositories import their tables from here and the
@@ -51,6 +55,8 @@ type AppSchema = typeof sqliteApp &
   typeof sqliteTelemetry &
   typeof sqliteAiVisibility &
   typeof sqliteLocalGrid &
+  typeof sqliteCitations &
+  typeof sqliteProspects &
   typeof sqlitePortal;
 
 const runtimeSchema =
@@ -69,6 +75,8 @@ const runtimeSchema =
         ...pgTelemetry,
         ...pgAiVisibility,
         ...pgLocalGrid,
+        ...pgCitations,
+        ...pgProspects,
         ...pgPortal,
       }
     : {
@@ -85,6 +93,8 @@ const runtimeSchema =
         ...sqliteTelemetry,
         ...sqliteAiVisibility,
         ...sqliteLocalGrid,
+        ...sqliteCitations,
+        ...sqliteProspects,
         ...sqlitePortal,
       };
 
@@ -102,6 +112,7 @@ export const {
   rankTrackingKeywords,
   rankCheckRuns,
   rankSnapshots,
+  rankSnapshotResults,
   organizationActivationState,
   projectActivationState,
   dashboardStepDismissals,
@@ -141,6 +152,12 @@ export const {
   localGridRuns,
   localGridPoints,
   localGridPointResults,
+  citationChecks,
+  citationRuns,
+  citationResults,
+  citationListings,
+  prospectSearches,
+  prospects,
   portalClients,
   portalStrategies,
   portalMilestones,

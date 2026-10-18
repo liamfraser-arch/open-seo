@@ -6,6 +6,7 @@ import { runLiveCheck } from "./rankCheckPaths";
 const mocks = vi.hoisted(() => ({
   getSnapshotsForRun: vi.fn(),
   insertSnapshots: vi.fn(),
+  insertSnapshotResults: vi.fn(),
   updateRun: vi.fn(),
   fetchRankCheckTaskResult: vi.fn(),
   rankCheckBatch: vi.fn(),
@@ -63,7 +64,13 @@ describe("runLiveCheck", () => {
       async (inputs: RankCheckTaskInput[]) =>
         inputs.map((input) => ({
           status: "fulfilled",
-          value: { ...input, position: 3, url: null, serpFeatures: [] },
+          value: {
+            ...input,
+            position: 3,
+            url: null,
+            serpFeatures: [],
+            topResults: [],
+          },
         })),
     );
     mocks.rankCheckTaskPost.mockImplementation(
@@ -73,7 +80,13 @@ describe("runLiveCheck", () => {
     mocks.fetchRankCheckTaskResult.mockImplementation(
       async (task: RankCheckTaskInput) => ({
         status: "completed",
-        result: { ...task, position: 5, url: null, serpFeatures: [] },
+        result: {
+          ...task,
+          position: 5,
+          url: null,
+          serpFeatures: [],
+          topResults: [],
+        },
       }),
     );
   });

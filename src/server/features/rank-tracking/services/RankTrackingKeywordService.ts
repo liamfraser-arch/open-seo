@@ -1,3 +1,4 @@
+import { LocalGridRepository } from "@/server/features/local-grid/LocalGridRepository";
 import { RankTrackingRepository } from "@/server/features/rank-tracking/repositories/RankTrackingRepository";
 import type { rankTrackingKeywords } from "@/db/schema";
 import { AppError } from "@/server/lib/errors";
@@ -207,7 +208,46 @@ function scheduledApprovalError(
   );
 }
 
+/**
+ * Keywords the project already searches in its Local Grids that this config
+ * does not track yet: someone mapping "ac repair" on Google Maps will want
+ * its organic rank too. Newest grid first.
+ */
+async function suggestLocalGridKeywords(configId: string, projectId: string) {
+  await getValidatedConfig(configId, projectId);
+  const tracked = new Set(
+    (await RankTrackingRepository.getKeywordsForConfig(configId)).map((row) =>
+      row.keyword.toLowerCase(),
+    ),
+  );
+  const seen = new Set<string>();
+  const grids = await LocalGridRepository.listGrids(projectId);
+  return grids.flatMap((grid) => {
+    const keyword = grid.keyword.trim().toLowerCase();
+    if (!keyword || tracked.has(keyword) || seen.has(keyword)) return [];
+    seen.add(keyword);
+    return [{ keyword, businessName: grid.businessName }];
+  });
+}
+
+/** The Google results the keyword's latest check saw, for the SERP preview. */
+async function getKeywordSerp(
+  configId: string,
+  projectId: string,
+  keywordId: string,
+  device: "desktop" | "mobile",
+) {
+  await getValidatedConfig(configId, projectId);
+  const keywords = await RankTrackingRepository.getKeywordsForConfig(configId);
+  if (!keywords.some((row) => row.id === keywordId)) {
+    throw new AppError("NOT_FOUND", "Keyword not found");
+  }
+  return RankTrackingRepository.getLatestSerp(keywordId, device);
+}
+
 export const RankTrackingKeywordService = {
+  getKeywordSerp,
+  suggestLocalGridKeywords,
   addKeywords,
   removeKeywords,
   setKeywordsPinned,

@@ -79,6 +79,8 @@ export function RankTrackingTable({
     showDesktop,
     showMobile,
     domain,
+    projectId,
+    configId,
     selectAnchorRef,
     onKeywordClick: handleKeywordClick,
     onSetPinned: setKeywordPinned,

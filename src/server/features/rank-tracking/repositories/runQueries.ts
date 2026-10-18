@@ -1,7 +1,7 @@
-import { and, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 import type { InferInsertModel } from "drizzle-orm";
 import { db } from "@/db";
-import { rankCheckRuns, rankSnapshots } from "@/db/schema";
+import { rankCheckRuns, rankSnapshotResults, rankSnapshots } from "@/db/schema";
 import { executeInBatches } from "@/db/runBatch";
 
 // ---------------------------------------------------------------------------
@@ -120,4 +120,59 @@ export async function insertSnapshots(
 
 export async function getSnapshotsForRun(runId: string) {
   return db.select().from(rankSnapshots).where(eq(rankSnapshots.runId, runId));
+}
+
+export async function insertSnapshotResults(
+  rows: Array<InferInsertModel<typeof rankSnapshotResults>>,
+) {
+  await executeInBatches(rows, (tx, row) =>
+    tx.insert(rankSnapshotResults).values(row).onConflictDoNothing(),
+  );
+}
+
+/** The results of the keyword's most recent check on this device. */
+export async function getLatestSerp(
+  trackingKeywordId: string,
+  device: "desktop" | "mobile",
+) {
+  const [latest] = await db
+    .select({ runId: rankSnapshots.runId, checkedAt: rankSnapshots.checkedAt })
+    .from(rankSnapshots)
+    .innerJoin(
+      rankSnapshotResults,
+      and(
+        eq(rankSnapshotResults.runId, rankSnapshots.runId),
+        eq(
+          rankSnapshotResults.trackingKeywordId,
+          rankSnapshots.trackingKeywordId,
+        ),
+        eq(rankSnapshotResults.device, rankSnapshots.device),
+      ),
+    )
+    .where(
+      and(
+        eq(rankSnapshots.trackingKeywordId, trackingKeywordId),
+        eq(rankSnapshots.device, device),
+      ),
+    )
+    .orderBy(desc(rankSnapshots.checkedAt))
+    .limit(1);
+  if (!latest) return null;
+  const results = await db
+    .select({
+      position: rankSnapshotResults.position,
+      url: rankSnapshotResults.url,
+      domain: rankSnapshotResults.domain,
+      title: rankSnapshotResults.title,
+    })
+    .from(rankSnapshotResults)
+    .where(
+      and(
+        eq(rankSnapshotResults.runId, latest.runId),
+        eq(rankSnapshotResults.trackingKeywordId, trackingKeywordId),
+        eq(rankSnapshotResults.device, device),
+      ),
+    )
+    .orderBy(asc(rankSnapshotResults.position));
+  return { checkedAt: latest.checkedAt, results };
 }

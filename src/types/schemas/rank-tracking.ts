@@ -125,6 +125,18 @@ export const addKeywordsSchema = z.object({
   matchCase: z.boolean().optional(),
 });
 
+export const getLocalGridSuggestionsSchema = z.object({
+  projectId: z.string().uuid(),
+  configId: z.string().uuid(),
+});
+
+export const getKeywordSerpSchema = z.object({
+  projectId: z.string().uuid(),
+  configId: z.string().uuid(),
+  keywordId: z.string().uuid(),
+  device: z.enum(["desktop", "mobile"]),
+});
+
 export const removeKeywordsSchema = z.object({
   projectId: z.string().uuid(),
   configId: z.string().uuid(),

@@ -3,6 +3,7 @@ import { AuditService } from "@/server/features/audit/services/AuditService";
 import { AuditRepository } from "@/server/features/audit/repositories/AuditRepository";
 import { DataRefreshClaimRepository } from "../repositories/DataRefreshClaimRepository";
 import { buildCacheKey } from "@/server/lib/r2-cache";
+import { isAuditRenderingAllowed } from "@/server/lib/audit/rendering-policy";
 import { asAppError } from "@/server/lib/errors";
 import type { BillingCustomerContext } from "@/server/billing/subscription";
 
@@ -42,7 +43,8 @@ async function start(
       projectId,
       startUrl: `https://${domain}`,
       maxPages: 50,
-      renderJavaScript: true,
+      // Local and Docker installs have no renderer; audit without it there.
+      renderJavaScript: await isAuditRenderingAllowed(),
       lighthouseStrategy: "none",
       limitTier,
     });

@@ -69,6 +69,7 @@ Everything below is in the sidebar of a project.
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Rank Tracking** | Track keyword positions over time on a schedule, by country, language and device (desktop or mobile).                                                    |
 | **Local Grid**    | See where a business ranks on Google Maps across its whole area. See [below](#local-grid).                                                               |
+| **Citations**     | Find which directories list a business, with a link to each listing. See [below](#citations).                                                            |
 | **GSC Insights**  | Clicks, impressions, CTR and position from Search Console, with the previous period for comparison and "striking distance" keywords (positions 5 to 20). |
 | **Site Audit**    | Crawl a site and list technical issues page by page.                                                                                                     |
 
@@ -101,6 +102,16 @@ A Local Grid answers "where does this business show up on Google Maps, and where
 Each run is saved. **Run again** later, then **Compare**: pick any two dates and see both grids side by side, with every pin on the later grid showing how far it moved. The summary cards show the change in each number, in green or red.
 
 A grid costs roughly 0.12 cents per point at DataForSEO's price, so a 5×5 grid is about 3 cents. The map background needs a Google Maps key (optional; without it the grid draws on a plain background).
+
+### Citations
+
+A Citation check answers "which directories list this business?"
+
+1. Enter the business name, and optionally a city to narrow the search.
+2. For each directory (Yelp, Facebook, BBB, Yellow Pages and a dozen more) the app runs a Google search, and if that finds nothing, a second search restricted to the directory's site. It keeps results that are business pages on that directory and name the business, not search or category pages.
+3. Each directory comes back as _Listed_, with a link to every listing found, or _Not found_. A business with several locations shows each location's listing. Run again later to see what changed. Directories whose search failed (Google's search service fails some requests) can be retried without searching the rest again.
+
+It only finds listings Google has indexed, and it doesn't check or fix the details on a listing. A check costs up to about 19 cents (16 directories, two searches each at most) and usually much less, since the second, pricier search only runs when the first finds nothing. Adding a city narrows the search to that area.
 
 ## The client portal
 

@@ -271,14 +271,7 @@ function PointResults({
                 {result.rank}
               </span>
               <span className="min-w-0 flex-1">
-                <span
-                  className={cn(
-                    "block truncate",
-                    result.isTarget && "font-medium",
-                  )}
-                >
-                  {result.title ?? "Untitled"}
-                </span>
+                <ProfileLink result={result} />
                 {result.rating != null ? (
                   <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                     <Star className="size-3" />
@@ -294,5 +287,37 @@ function PointResults({
         </ol>
       ) : null}
     </div>
+  );
+}
+
+/** Opens the business's Google Maps profile; plain text without an id. */
+function ProfileLink({
+  result,
+}: {
+  result: {
+    title: string | null;
+    placeId: string | null;
+    cid: string | null;
+    isTarget: boolean;
+  };
+}) {
+  const label = result.title ?? "Untitled";
+  const className = cn("block truncate", result.isTarget && "font-medium");
+  const url = result.placeId
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(label)}&query_place_id=${encodeURIComponent(result.placeId)}`
+    : result.cid
+      ? `https://maps.google.com/?cid=${encodeURIComponent(result.cid)}`
+      : null;
+  if (!url) return <span className={className}>{label}</span>;
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      title="Open on Google Maps"
+      className={cn(className, "hover:text-primary hover:underline")}
+    >
+      {label}
+    </a>
   );
 }

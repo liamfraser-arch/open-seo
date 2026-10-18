@@ -4,6 +4,8 @@ import {
   Brain,
   ChartLine,
   ClipboardCheck,
+  ListChecks,
+  Target,
   FileText,
   Globe,
   Grid3x3,
@@ -44,6 +46,11 @@ const projectNavItems = [
     to: "/p/$projectId/local-grid" as const,
     label: "Local Grid",
     icon: Grid3x3,
+  },
+  {
+    to: "/p/$projectId/citations" as const,
+    label: "Citations",
+    icon: ListChecks,
   },
   {
     to: "/p/$projectId/search-performance" as const,
@@ -101,6 +108,19 @@ const aiNavItem = linkOptions({
   icon: Bot,
 });
 
+// Project-independent: prospects are not clients yet, so they live above the
+// project's own tools and stay when the project changes.
+export const agencyNavGroup = {
+  label: "Agency",
+  items: [
+    linkOptions({
+      to: "/prospects" as const,
+      label: "Prospects",
+      icon: Target,
+    }),
+  ],
+};
+
 // Shown only when no project is selected; with a project, Agent setup lives in
 // the "AI Tools" group below.
 export const connectNavGroup = {
@@ -152,6 +172,7 @@ export function getProjectNavGroups(projectId: string) {
         byPath("/p/$projectId/search-performance"),
         byPath("/p/$projectId/rank-tracking"),
         byPath("/p/$projectId/local-grid"),
+        byPath("/p/$projectId/citations"),
         byPath("/p/$projectId/saved"),
         byPath("/p/$projectId/audit"),
       ],

@@ -21,6 +21,7 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppAiRouteImport } from './routes/_app/ai'
 import { Route as AppBillingRouteImport } from './routes/_app/billing'
 import { Route as AppProjectsRouteImport } from './routes/_app/projects'
+import { Route as AppProspectsRouteImport } from './routes/_app/prospects'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppSupportRouteImport } from './routes/_app/support'
 import { Route as AuthSignInRouteImport } from './routes/_auth.sign-in'
@@ -37,6 +38,8 @@ import { Route as AppBillingFixPaymentRouteImport } from './routes/_app/billing_
 import { Route as AppHelpDataforseoApiKeyRouteImport } from './routes/_app/help/dataforseo-api-key'
 import { Route as AppHelpOpenrouterApiKeyRouteImport } from './routes/_app/help/openrouter-api-key'
 import { Route as AppPProjectIdRouteRouteImport } from './routes/_app/p/$projectId/route'
+import { Route as AppProspectsIndexRouteImport } from './routes/_app/prospects/index'
+import { Route as AppProspectsSearchIdRouteImport } from './routes/_app/prospects/$searchId'
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppSettingsOrganizationRouteImport } from './routes/_app/settings/organization'
 import { Route as AuthenticatedOnboardingIndexRouteImport } from './routes/_authenticated.onboarding.index'
@@ -49,10 +52,12 @@ import { Route as AppPProjectIdIndexRouteImport } from './routes/_app/p/$project
 import { Route as AppPProjectIdAiVisibilityRouteImport } from './routes/_app/p/$projectId/ai-visibility'
 import { Route as AppPProjectIdBacklinksRouteImport } from './routes/_app/p/$projectId/backlinks'
 import { Route as AppPProjectIdBrandLookupRouteImport } from './routes/_app/p/$projectId/brand-lookup'
+import { Route as AppPProjectIdCitationsRouteImport } from './routes/_app/p/$projectId/citations'
 import { Route as AppPProjectIdContextRouteImport } from './routes/_app/p/$projectId/context'
 import { Route as AppPProjectIdDomainRouteImport } from './routes/_app/p/$projectId/domain'
 import { Route as AppPProjectIdKeywordsRouteImport } from './routes/_app/p/$projectId/keywords'
 import { Route as AppPProjectIdLocalGridRouteImport } from './routes/_app/p/$projectId/local-grid'
+import { Route as AppPProjectIdPresentRouteImport } from './routes/_app/p/$projectId/present'
 import { Route as AppPProjectIdPromptExplorerRouteImport } from './routes/_app/p/$projectId/prompt-explorer'
 import { Route as AppPProjectIdRankTrackingRouteImport } from './routes/_app/p/$projectId/rank-tracking'
 import { Route as AppPProjectIdSamRouteImport } from './routes/_app/p/$projectId/sam'
@@ -64,6 +69,8 @@ import { Route as ApiGscOauthCallbackRouteImport } from './routes/api/gsc/oauth/
 import { Route as AppPProjectIdAiVisibilityIndexRouteImport } from './routes/_app/p/$projectId/ai-visibility/index'
 import { Route as AppPProjectIdAiVisibilityResearchRouteImport } from './routes/_app/p/$projectId/ai-visibility/research'
 import { Route as AppPProjectIdAuditIndexRouteImport } from './routes/_app/p/$projectId/audit/index'
+import { Route as AppPProjectIdCitationsIndexRouteImport } from './routes/_app/p/$projectId/citations/index'
+import { Route as AppPProjectIdCitationsCheckIdRouteImport } from './routes/_app/p/$projectId/citations/$checkId'
 import { Route as AppPProjectIdLocalGridIndexRouteImport } from './routes/_app/p/$projectId/local-grid/index'
 import { Route as AppPProjectIdLocalGridGridIdRouteImport } from './routes/_app/p/$projectId/local-grid/$gridId'
 import { Route as AppPProjectIdRankTrackingIndexRouteImport } from './routes/_app/p/$projectId/rank-tracking/index'
@@ -134,6 +141,11 @@ const AppBillingRoute = AppBillingRouteImport.update({
 const AppProjectsRoute = AppProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppProspectsRoute = AppProspectsRouteImport.update({
+  id: '/prospects',
+  path: '/prospects',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -217,6 +229,16 @@ const AppPProjectIdRouteRoute = AppPProjectIdRouteRouteImport.update({
   path: '/p/$projectId',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppProspectsIndexRoute = AppProspectsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProspectsRoute,
+} as any)
+const AppProspectsSearchIdRoute = AppProspectsSearchIdRouteImport.update({
+  id: '/$searchId',
+  path: '/$searchId',
+  getParentRoute: () => AppProspectsRoute,
+} as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -280,6 +302,11 @@ const AppPProjectIdBrandLookupRoute =
     path: '/brand-lookup',
     getParentRoute: () => AppPProjectIdRouteRoute,
   } as any)
+const AppPProjectIdCitationsRoute = AppPProjectIdCitationsRouteImport.update({
+  id: '/citations',
+  path: '/citations',
+  getParentRoute: () => AppPProjectIdRouteRoute,
+} as any)
 const AppPProjectIdContextRoute = AppPProjectIdContextRouteImport.update({
   id: '/context',
   path: '/context',
@@ -298,6 +325,11 @@ const AppPProjectIdKeywordsRoute = AppPProjectIdKeywordsRouteImport.update({
 const AppPProjectIdLocalGridRoute = AppPProjectIdLocalGridRouteImport.update({
   id: '/local-grid',
   path: '/local-grid',
+  getParentRoute: () => AppPProjectIdRouteRoute,
+} as any)
+const AppPProjectIdPresentRoute = AppPProjectIdPresentRouteImport.update({
+  id: '/present',
+  path: '/present',
   getParentRoute: () => AppPProjectIdRouteRoute,
 } as any)
 const AppPProjectIdPromptExplorerRoute =
@@ -360,6 +392,18 @@ const AppPProjectIdAuditIndexRoute = AppPProjectIdAuditIndexRouteImport.update({
   path: '/audit/',
   getParentRoute: () => AppPProjectIdRouteRoute,
 } as any)
+const AppPProjectIdCitationsIndexRoute =
+  AppPProjectIdCitationsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppPProjectIdCitationsRoute,
+  } as any)
+const AppPProjectIdCitationsCheckIdRoute =
+  AppPProjectIdCitationsCheckIdRouteImport.update({
+    id: '/$checkId',
+    path: '/$checkId',
+    getParentRoute: () => AppPProjectIdCitationsRoute,
+  } as any)
 const AppPProjectIdLocalGridIndexRoute =
   AppPProjectIdLocalGridIndexRouteImport.update({
     id: '/',
@@ -449,6 +493,7 @@ export interface FileRoutesByFullPath {
   '/ai': typeof AppAiRoute
   '/billing': typeof AppBillingRoute
   '/projects': typeof AppProjectsRoute
+  '/prospects': typeof AppProspectsRouteWithChildren
   '/settings': typeof AppSettingsRouteWithChildren
   '/support': typeof AppSupportRoute
   '/sign-in': typeof AuthSignInRoute
@@ -465,21 +510,25 @@ export interface FileRoutesByFullPath {
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
+  '/prospects/$searchId': typeof AppProspectsSearchIdRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
+  '/prospects/': typeof AppProspectsIndexRoute
   '/settings/': typeof AppSettingsIndexRoute
   '/onboarding/': typeof AuthenticatedOnboardingIndexRoute
   '/s/$token/': typeof STokenIndexRoute
   '/p/$projectId/ai-visibility': typeof AppPProjectIdAiVisibilityRouteWithChildren
   '/p/$projectId/backlinks': typeof AppPProjectIdBacklinksRoute
   '/p/$projectId/brand-lookup': typeof AppPProjectIdBrandLookupRoute
+  '/p/$projectId/citations': typeof AppPProjectIdCitationsRouteWithChildren
   '/p/$projectId/context': typeof AppPProjectIdContextRoute
   '/p/$projectId/domain': typeof AppPProjectIdDomainRoute
   '/p/$projectId/keywords': typeof AppPProjectIdKeywordsRoute
   '/p/$projectId/local-grid': typeof AppPProjectIdLocalGridRouteWithChildren
+  '/p/$projectId/present': typeof AppPProjectIdPresentRoute
   '/p/$projectId/prompt-explorer': typeof AppPProjectIdPromptExplorerRoute
   '/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingRouteWithChildren
   '/p/$projectId/sam': typeof AppPProjectIdSamRoute
@@ -490,6 +539,7 @@ export interface FileRoutesByFullPath {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/p/$projectId/': typeof AppPProjectIdIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/p/$projectId/citations/$checkId': typeof AppPProjectIdCitationsCheckIdRoute
   '/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -499,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/p/$projectId/ai-visibility/': typeof AppPProjectIdAiVisibilityIndexRoute
   '/p/$projectId/audit/': typeof AppPProjectIdAuditIndexRoute
+  '/p/$projectId/citations/': typeof AppPProjectIdCitationsIndexRoute
   '/p/$projectId/local-grid/': typeof AppPProjectIdLocalGridIndexRoute
   '/p/$projectId/rank-tracking/': typeof AppPProjectIdRankTrackingIndexRoute
   '/p/$projectId/reports/': typeof AppPProjectIdReportsIndexRoute
@@ -530,11 +581,13 @@ export interface FileRoutesByTo {
   '/billing/fix-payment': typeof AppBillingFixPaymentRoute
   '/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
+  '/prospects/$searchId': typeof AppProspectsSearchIdRoute
   '/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
+  '/prospects': typeof AppProspectsIndexRoute
   '/settings': typeof AppSettingsIndexRoute
   '/onboarding': typeof AuthenticatedOnboardingIndexRoute
   '/s/$token': typeof STokenIndexRoute
@@ -543,6 +596,7 @@ export interface FileRoutesByTo {
   '/p/$projectId/context': typeof AppPProjectIdContextRoute
   '/p/$projectId/domain': typeof AppPProjectIdDomainRoute
   '/p/$projectId/keywords': typeof AppPProjectIdKeywordsRoute
+  '/p/$projectId/present': typeof AppPProjectIdPresentRoute
   '/p/$projectId/prompt-explorer': typeof AppPProjectIdPromptExplorerRoute
   '/p/$projectId/sam': typeof AppPProjectIdSamRoute
   '/p/$projectId/saved': typeof AppPProjectIdSavedRoute
@@ -551,6 +605,7 @@ export interface FileRoutesByTo {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/p/$projectId': typeof AppPProjectIdIndexRoute
   '/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/p/$projectId/citations/$checkId': typeof AppPProjectIdCitationsCheckIdRoute
   '/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -560,6 +615,7 @@ export interface FileRoutesByTo {
   '/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/p/$projectId/ai-visibility': typeof AppPProjectIdAiVisibilityIndexRoute
   '/p/$projectId/audit': typeof AppPProjectIdAuditIndexRoute
+  '/p/$projectId/citations': typeof AppPProjectIdCitationsIndexRoute
   '/p/$projectId/local-grid': typeof AppPProjectIdLocalGridIndexRoute
   '/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingIndexRoute
   '/p/$projectId/reports': typeof AppPProjectIdReportsIndexRoute
@@ -580,6 +636,7 @@ export interface FileRoutesById {
   '/_app/ai': typeof AppAiRoute
   '/_app/billing': typeof AppBillingRoute
   '/_app/projects': typeof AppProjectsRoute
+  '/_app/prospects': typeof AppProspectsRouteWithChildren
   '/_app/settings': typeof AppSettingsRouteWithChildren
   '/_app/support': typeof AppSupportRoute
   '/_auth/sign-in': typeof AuthSignInRoute
@@ -597,21 +654,25 @@ export interface FileRoutesById {
   '/_app/billing_/fix-payment': typeof AppBillingFixPaymentRoute
   '/_app/help/dataforseo-api-key': typeof AppHelpDataforseoApiKeyRoute
   '/_app/help/openrouter-api-key': typeof AppHelpOpenrouterApiKeyRoute
+  '/_app/prospects/$searchId': typeof AppProspectsSearchIdRoute
   '/_app/settings/organization': typeof AppSettingsOrganizationRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/autumn/$': typeof ApiAutumnSplatRoute
   '/s/$token/og.png': typeof STokenOgDotpngRoute
   '/s/$token/raw': typeof STokenRawRoute
+  '/_app/prospects/': typeof AppProspectsIndexRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
   '/_authenticated/onboarding/': typeof AuthenticatedOnboardingIndexRoute
   '/s/$token/': typeof STokenIndexRoute
   '/_app/p/$projectId/ai-visibility': typeof AppPProjectIdAiVisibilityRouteWithChildren
   '/_app/p/$projectId/backlinks': typeof AppPProjectIdBacklinksRoute
   '/_app/p/$projectId/brand-lookup': typeof AppPProjectIdBrandLookupRoute
+  '/_app/p/$projectId/citations': typeof AppPProjectIdCitationsRouteWithChildren
   '/_app/p/$projectId/context': typeof AppPProjectIdContextRoute
   '/_app/p/$projectId/domain': typeof AppPProjectIdDomainRoute
   '/_app/p/$projectId/keywords': typeof AppPProjectIdKeywordsRoute
   '/_app/p/$projectId/local-grid': typeof AppPProjectIdLocalGridRouteWithChildren
+  '/_app/p/$projectId/present': typeof AppPProjectIdPresentRoute
   '/_app/p/$projectId/prompt-explorer': typeof AppPProjectIdPromptExplorerRoute
   '/_app/p/$projectId/rank-tracking': typeof AppPProjectIdRankTrackingRouteWithChildren
   '/_app/p/$projectId/sam': typeof AppPProjectIdSamRoute
@@ -622,6 +683,7 @@ export interface FileRoutesById {
   '/api/gsc/oauth/callback': typeof ApiGscOauthCallbackRoute
   '/_app/p/$projectId/': typeof AppPProjectIdIndexRoute
   '/_app/p/$projectId/ai-visibility/research': typeof AppPProjectIdAiVisibilityResearchRoute
+  '/_app/p/$projectId/citations/$checkId': typeof AppPProjectIdCitationsCheckIdRoute
   '/_app/p/$projectId/local-grid/$gridId': typeof AppPProjectIdLocalGridGridIdRoute
   '/_app/p/$projectId/rank-tracking/$configId': typeof AppPProjectIdRankTrackingConfigIdRoute
   '/_app/p/$projectId/reports/$reportId': typeof AppPProjectIdReportsReportIdRoute
@@ -631,6 +693,7 @@ export interface FileRoutesById {
   '/_app/p/$projectId/settings/integrations': typeof AppPProjectIdSettingsIntegrationsRoute
   '/_app/p/$projectId/ai-visibility/': typeof AppPProjectIdAiVisibilityIndexRoute
   '/_app/p/$projectId/audit/': typeof AppPProjectIdAuditIndexRoute
+  '/_app/p/$projectId/citations/': typeof AppPProjectIdCitationsIndexRoute
   '/_app/p/$projectId/local-grid/': typeof AppPProjectIdLocalGridIndexRoute
   '/_app/p/$projectId/rank-tracking/': typeof AppPProjectIdRankTrackingIndexRoute
   '/_app/p/$projectId/reports/': typeof AppPProjectIdReportsIndexRoute
@@ -650,6 +713,7 @@ export interface FileRouteTypes {
     | '/ai'
     | '/billing'
     | '/projects'
+    | '/prospects'
     | '/settings'
     | '/support'
     | '/sign-in'
@@ -666,21 +730,25 @@ export interface FileRouteTypes {
     | '/billing/fix-payment'
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
+    | '/prospects/$searchId'
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/s/$token/og.png'
     | '/s/$token/raw'
+    | '/prospects/'
     | '/settings/'
     | '/onboarding/'
     | '/s/$token/'
     | '/p/$projectId/ai-visibility'
     | '/p/$projectId/backlinks'
     | '/p/$projectId/brand-lookup'
+    | '/p/$projectId/citations'
     | '/p/$projectId/context'
     | '/p/$projectId/domain'
     | '/p/$projectId/keywords'
     | '/p/$projectId/local-grid'
+    | '/p/$projectId/present'
     | '/p/$projectId/prompt-explorer'
     | '/p/$projectId/rank-tracking'
     | '/p/$projectId/sam'
@@ -691,6 +759,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/p/$projectId/'
     | '/p/$projectId/ai-visibility/research'
+    | '/p/$projectId/citations/$checkId'
     | '/p/$projectId/local-grid/$gridId'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -700,6 +769,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/settings/integrations'
     | '/p/$projectId/ai-visibility/'
     | '/p/$projectId/audit/'
+    | '/p/$projectId/citations/'
     | '/p/$projectId/local-grid/'
     | '/p/$projectId/rank-tracking/'
     | '/p/$projectId/reports/'
@@ -731,11 +801,13 @@ export interface FileRouteTypes {
     | '/billing/fix-payment'
     | '/help/dataforseo-api-key'
     | '/help/openrouter-api-key'
+    | '/prospects/$searchId'
     | '/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/s/$token/og.png'
     | '/s/$token/raw'
+    | '/prospects'
     | '/settings'
     | '/onboarding'
     | '/s/$token'
@@ -744,6 +816,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/context'
     | '/p/$projectId/domain'
     | '/p/$projectId/keywords'
+    | '/p/$projectId/present'
     | '/p/$projectId/prompt-explorer'
     | '/p/$projectId/sam'
     | '/p/$projectId/saved'
@@ -752,6 +825,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/p/$projectId'
     | '/p/$projectId/ai-visibility/research'
+    | '/p/$projectId/citations/$checkId'
     | '/p/$projectId/local-grid/$gridId'
     | '/p/$projectId/rank-tracking/$configId'
     | '/p/$projectId/reports/$reportId'
@@ -761,6 +835,7 @@ export interface FileRouteTypes {
     | '/p/$projectId/settings/integrations'
     | '/p/$projectId/ai-visibility'
     | '/p/$projectId/audit'
+    | '/p/$projectId/citations'
     | '/p/$projectId/local-grid'
     | '/p/$projectId/rank-tracking'
     | '/p/$projectId/reports'
@@ -780,6 +855,7 @@ export interface FileRouteTypes {
     | '/_app/ai'
     | '/_app/billing'
     | '/_app/projects'
+    | '/_app/prospects'
     | '/_app/settings'
     | '/_app/support'
     | '/_auth/sign-in'
@@ -797,21 +873,25 @@ export interface FileRouteTypes {
     | '/_app/billing_/fix-payment'
     | '/_app/help/dataforseo-api-key'
     | '/_app/help/openrouter-api-key'
+    | '/_app/prospects/$searchId'
     | '/_app/settings/organization'
     | '/api/auth/$'
     | '/api/autumn/$'
     | '/s/$token/og.png'
     | '/s/$token/raw'
+    | '/_app/prospects/'
     | '/_app/settings/'
     | '/_authenticated/onboarding/'
     | '/s/$token/'
     | '/_app/p/$projectId/ai-visibility'
     | '/_app/p/$projectId/backlinks'
     | '/_app/p/$projectId/brand-lookup'
+    | '/_app/p/$projectId/citations'
     | '/_app/p/$projectId/context'
     | '/_app/p/$projectId/domain'
     | '/_app/p/$projectId/keywords'
     | '/_app/p/$projectId/local-grid'
+    | '/_app/p/$projectId/present'
     | '/_app/p/$projectId/prompt-explorer'
     | '/_app/p/$projectId/rank-tracking'
     | '/_app/p/$projectId/sam'
@@ -822,6 +902,7 @@ export interface FileRouteTypes {
     | '/api/gsc/oauth/callback'
     | '/_app/p/$projectId/'
     | '/_app/p/$projectId/ai-visibility/research'
+    | '/_app/p/$projectId/citations/$checkId'
     | '/_app/p/$projectId/local-grid/$gridId'
     | '/_app/p/$projectId/rank-tracking/$configId'
     | '/_app/p/$projectId/reports/$reportId'
@@ -831,6 +912,7 @@ export interface FileRouteTypes {
     | '/_app/p/$projectId/settings/integrations'
     | '/_app/p/$projectId/ai-visibility/'
     | '/_app/p/$projectId/audit/'
+    | '/_app/p/$projectId/citations/'
     | '/_app/p/$projectId/local-grid/'
     | '/_app/p/$projectId/rank-tracking/'
     | '/_app/p/$projectId/reports/'
@@ -948,6 +1030,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/prospects': {
+      id: '/_app/prospects'
+      path: '/prospects'
+      fullPath: '/prospects'
+      preLoaderRoute: typeof AppProspectsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -1060,6 +1149,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPProjectIdRouteRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/prospects/': {
+      id: '/_app/prospects/'
+      path: '/'
+      fullPath: '/prospects/'
+      preLoaderRoute: typeof AppProspectsIndexRouteImport
+      parentRoute: typeof AppProspectsRoute
+    }
+    '/_app/prospects/$searchId': {
+      id: '/_app/prospects/$searchId'
+      path: '/$searchId'
+      fullPath: '/prospects/$searchId'
+      preLoaderRoute: typeof AppProspectsSearchIdRouteImport
+      parentRoute: typeof AppProspectsRoute
+    }
     '/_app/settings/': {
       id: '/_app/settings/'
       path: '/'
@@ -1144,6 +1247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPProjectIdBrandLookupRouteImport
       parentRoute: typeof AppPProjectIdRouteRoute
     }
+    '/_app/p/$projectId/citations': {
+      id: '/_app/p/$projectId/citations'
+      path: '/citations'
+      fullPath: '/p/$projectId/citations'
+      preLoaderRoute: typeof AppPProjectIdCitationsRouteImport
+      parentRoute: typeof AppPProjectIdRouteRoute
+    }
     '/_app/p/$projectId/context': {
       id: '/_app/p/$projectId/context'
       path: '/context'
@@ -1170,6 +1280,13 @@ declare module '@tanstack/react-router' {
       path: '/local-grid'
       fullPath: '/p/$projectId/local-grid'
       preLoaderRoute: typeof AppPProjectIdLocalGridRouteImport
+      parentRoute: typeof AppPProjectIdRouteRoute
+    }
+    '/_app/p/$projectId/present': {
+      id: '/_app/p/$projectId/present'
+      path: '/present'
+      fullPath: '/p/$projectId/present'
+      preLoaderRoute: typeof AppPProjectIdPresentRouteImport
       parentRoute: typeof AppPProjectIdRouteRoute
     }
     '/_app/p/$projectId/prompt-explorer': {
@@ -1248,6 +1365,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$projectId/audit/'
       preLoaderRoute: typeof AppPProjectIdAuditIndexRouteImport
       parentRoute: typeof AppPProjectIdRouteRoute
+    }
+    '/_app/p/$projectId/citations/': {
+      id: '/_app/p/$projectId/citations/'
+      path: '/'
+      fullPath: '/p/$projectId/citations/'
+      preLoaderRoute: typeof AppPProjectIdCitationsIndexRouteImport
+      parentRoute: typeof AppPProjectIdCitationsRoute
+    }
+    '/_app/p/$projectId/citations/$checkId': {
+      id: '/_app/p/$projectId/citations/$checkId'
+      path: '/$checkId'
+      fullPath: '/p/$projectId/citations/$checkId'
+      preLoaderRoute: typeof AppPProjectIdCitationsCheckIdRouteImport
+      parentRoute: typeof AppPProjectIdCitationsRoute
     }
     '/_app/p/$projectId/local-grid/': {
       id: '/_app/p/$projectId/local-grid/'
@@ -1343,6 +1474,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppProspectsRouteChildren {
+  AppProspectsSearchIdRoute: typeof AppProspectsSearchIdRoute
+  AppProspectsIndexRoute: typeof AppProspectsIndexRoute
+}
+
+const AppProspectsRouteChildren: AppProspectsRouteChildren = {
+  AppProspectsSearchIdRoute: AppProspectsSearchIdRoute,
+  AppProspectsIndexRoute: AppProspectsIndexRoute,
+}
+
+const AppProspectsRouteWithChildren = AppProspectsRoute._addFileChildren(
+  AppProspectsRouteChildren,
+)
+
 interface AppSettingsRouteChildren {
   AppSettingsOrganizationRoute: typeof AppSettingsOrganizationRoute
   AppSettingsIndexRoute: typeof AppSettingsIndexRoute
@@ -1375,6 +1520,22 @@ const AppPProjectIdAiVisibilityRouteChildren: AppPProjectIdAiVisibilityRouteChil
 const AppPProjectIdAiVisibilityRouteWithChildren =
   AppPProjectIdAiVisibilityRoute._addFileChildren(
     AppPProjectIdAiVisibilityRouteChildren,
+  )
+
+interface AppPProjectIdCitationsRouteChildren {
+  AppPProjectIdCitationsCheckIdRoute: typeof AppPProjectIdCitationsCheckIdRoute
+  AppPProjectIdCitationsIndexRoute: typeof AppPProjectIdCitationsIndexRoute
+}
+
+const AppPProjectIdCitationsRouteChildren: AppPProjectIdCitationsRouteChildren =
+  {
+    AppPProjectIdCitationsCheckIdRoute: AppPProjectIdCitationsCheckIdRoute,
+    AppPProjectIdCitationsIndexRoute: AppPProjectIdCitationsIndexRoute,
+  }
+
+const AppPProjectIdCitationsRouteWithChildren =
+  AppPProjectIdCitationsRoute._addFileChildren(
+    AppPProjectIdCitationsRouteChildren,
   )
 
 interface AppPProjectIdLocalGridRouteChildren {
@@ -1435,10 +1596,12 @@ interface AppPProjectIdRouteRouteChildren {
   AppPProjectIdAiVisibilityRoute: typeof AppPProjectIdAiVisibilityRouteWithChildren
   AppPProjectIdBacklinksRoute: typeof AppPProjectIdBacklinksRoute
   AppPProjectIdBrandLookupRoute: typeof AppPProjectIdBrandLookupRoute
+  AppPProjectIdCitationsRoute: typeof AppPProjectIdCitationsRouteWithChildren
   AppPProjectIdContextRoute: typeof AppPProjectIdContextRoute
   AppPProjectIdDomainRoute: typeof AppPProjectIdDomainRoute
   AppPProjectIdKeywordsRoute: typeof AppPProjectIdKeywordsRoute
   AppPProjectIdLocalGridRoute: typeof AppPProjectIdLocalGridRouteWithChildren
+  AppPProjectIdPresentRoute: typeof AppPProjectIdPresentRoute
   AppPProjectIdPromptExplorerRoute: typeof AppPProjectIdPromptExplorerRoute
   AppPProjectIdRankTrackingRoute: typeof AppPProjectIdRankTrackingRouteWithChildren
   AppPProjectIdSamRoute: typeof AppPProjectIdSamRoute
@@ -1457,10 +1620,12 @@ const AppPProjectIdRouteRouteChildren: AppPProjectIdRouteRouteChildren = {
   AppPProjectIdAiVisibilityRoute: AppPProjectIdAiVisibilityRouteWithChildren,
   AppPProjectIdBacklinksRoute: AppPProjectIdBacklinksRoute,
   AppPProjectIdBrandLookupRoute: AppPProjectIdBrandLookupRoute,
+  AppPProjectIdCitationsRoute: AppPProjectIdCitationsRouteWithChildren,
   AppPProjectIdContextRoute: AppPProjectIdContextRoute,
   AppPProjectIdDomainRoute: AppPProjectIdDomainRoute,
   AppPProjectIdKeywordsRoute: AppPProjectIdKeywordsRoute,
   AppPProjectIdLocalGridRoute: AppPProjectIdLocalGridRouteWithChildren,
+  AppPProjectIdPresentRoute: AppPProjectIdPresentRoute,
   AppPProjectIdPromptExplorerRoute: AppPProjectIdPromptExplorerRoute,
   AppPProjectIdRankTrackingRoute: AppPProjectIdRankTrackingRouteWithChildren,
   AppPProjectIdSamRoute: AppPProjectIdSamRoute,
@@ -1482,6 +1647,7 @@ interface AppRouteRouteChildren {
   AppAiRoute: typeof AppAiRoute
   AppBillingRoute: typeof AppBillingRoute
   AppProjectsRoute: typeof AppProjectsRoute
+  AppProspectsRoute: typeof AppProspectsRouteWithChildren
   AppSettingsRoute: typeof AppSettingsRouteWithChildren
   AppSupportRoute: typeof AppSupportRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -1495,6 +1661,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAiRoute: AppAiRoute,
   AppBillingRoute: AppBillingRoute,
   AppProjectsRoute: AppProjectsRoute,
+  AppProspectsRoute: AppProspectsRouteWithChildren,
   AppSettingsRoute: AppSettingsRouteWithChildren,
   AppSupportRoute: AppSupportRoute,
   AppIndexRoute: AppIndexRoute,

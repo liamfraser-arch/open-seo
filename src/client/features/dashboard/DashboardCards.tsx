@@ -1,5 +1,5 @@
 import { GoogleSearchConsoleLogo } from "@/client/features/integrations/GoogleProductLogos";
-import { startAudit } from "@/serverFunctions/audit";
+import { getAuditCapabilities, startAudit } from "@/serverFunctions/audit";
 import { QueryError } from "@/client/components/QueryState";
 import { LoaderCircle, ScanSearch } from "lucide-react";
 import { CardShell } from "@/client/components/CardShell";
@@ -163,15 +163,21 @@ export function AuditHealthCard({
 }) {
   const queryClient = useQueryClient();
   const scan = useMutation({
-    mutationFn: () =>
-      startAudit({
+    mutationFn: async () => {
+      // Rendering needs a browser the deployment may not have (local dev,
+      // Docker); scan without it there instead of failing.
+      const { canRenderJavaScript } = await getAuditCapabilities({
+        data: { projectId },
+      });
+      return startAudit({
         data: {
           projectId,
           startUrl: `https://${domain}`,
           maxPages: 50,
-          renderJavaScript: true,
+          renderJavaScript: canRenderJavaScript,
         },
-      }),
+      });
+    },
     onSuccess: () =>
       void queryClient.invalidateQueries({
         queryKey: ["dashboardOverview", projectId],

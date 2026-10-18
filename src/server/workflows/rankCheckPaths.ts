@@ -41,6 +41,33 @@ function mapResultsToSnapshotRows(
   }));
 }
 
+function mapResultsToSerpRows(
+  runId: string,
+  results: RankCheckResultWithDevice[],
+) {
+  return results.flatMap((r) =>
+    r.topResults.map((result) => ({
+      runId,
+      trackingKeywordId: r.keywordId,
+      device: r.device,
+      ...result,
+    })),
+  );
+}
+
+/** Saves the snapshots, then the SERP each one was read from. */
+async function saveResults(
+  runId: string,
+  results: RankCheckResultWithDevice[],
+) {
+  await RankTrackingRepository.insertSnapshots(
+    mapResultsToSnapshotRows(runId, results),
+  );
+  await RankTrackingRepository.insertSnapshotResults(
+    mapResultsToSerpRows(runId, results),
+  );
+}
+
 interface CheckContext {
   client: ReturnType<typeof createDataforseoClient>;
   keywords: KeywordEntry[];
@@ -129,9 +156,7 @@ async function checkBatchLive(
     await RankTrackingRepository.setRunErrorIfEmpty(ctx.runId, firstError);
   }
   if (results.length > 0) {
-    await RankTrackingRepository.insertSnapshots(
-      mapResultsToSnapshotRows(ctx.runId, results),
-    );
+    await saveResults(ctx.runId, results);
   }
   return results.length;
 }
@@ -312,9 +337,7 @@ async function collectQueuedRound(
   }
 
   if (completed.length > 0) {
-    await RankTrackingRepository.insertSnapshots(
-      mapResultsToSnapshotRows(ctx.runId, completed),
-    );
+    await saveResults(ctx.runId, completed);
     // Progress for the UI; finalize recounts from the DB anyway.
     const snapshots = await RankTrackingRepository.getSnapshotsForRun(
       ctx.runId,

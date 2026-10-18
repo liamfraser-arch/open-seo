@@ -7,7 +7,10 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { getDomainKeywordSuggestions } from "@/serverFunctions/domain";
-import { addTrackingKeywords } from "@/serverFunctions/rank-tracking";
+import {
+  addTrackingKeywords,
+  getLocalGridKeywordSuggestions,
+} from "@/serverFunctions/rank-tracking";
 import { isLabsLocationCode } from "@/client/features/keywords/locations";
 import { Spinner } from "@/client/components/Spinner";
 import {
@@ -16,6 +19,7 @@ import {
   useDataTable,
 } from "@/client/components/table/DataTable";
 import { Button } from "@/client/components/ui/button";
+import { Checkbox } from "@/client/components/ui/checkbox";
 import {
   DialogDescription,
   DialogFooter,
@@ -181,6 +185,22 @@ export function KeywordSuggestionStep({
 
   const data = suggestionsQuery.data ?? [];
 
+  // Keywords the project already maps in its Local Grids, all picked to start.
+  const gridQuery = useQuery({
+    queryKey: ["localGridKeywordSuggestions", projectId, configId],
+    queryFn: () =>
+      getLocalGridKeywordSuggestions({ data: { projectId, configId } }),
+  });
+  const gridKeywords = gridQuery.data ?? [];
+  const [gridPicked, setGridPicked] = useState<Set<string>>(new Set());
+  const [gridInitialized, setGridInitialized] = useState(false);
+  useEffect(() => {
+    if (gridQuery.data && !gridInitialized) {
+      setGridPicked(new Set(gridQuery.data.map((item) => item.keyword)));
+      setGridInitialized(true);
+    }
+  }, [gridQuery.data, gridInitialized]);
+
   // Pre-select top 20 by traffic once data loads.
   useEffect(() => {
     const items = suggestionsQuery.data;
@@ -223,13 +243,69 @@ export function KeywordSuggestionStep({
   });
 
   const handleAdd = () => {
-    const selectedKeywords = table
-      .getSelectedRowModel()
-      .rows.map((row) => row.original.keyword);
-    if (selectedKeywords.length > 0) {
-      addMutation.mutate(selectedKeywords);
+    const selectedKeywords = new Set([
+      ...table.getSelectedRowModel().rows.map((row) => row.original.keyword),
+      ...gridPicked,
+    ]);
+    if (selectedKeywords.size > 0) {
+      addMutation.mutate([...selectedKeywords]);
     }
   };
+
+  const gridSection =
+    gridKeywords.length > 0 ? (
+      <div className="flex flex-col gap-2 rounded-lg border bg-muted/40 p-3">
+        <div>
+          <p className="text-sm font-medium">
+            Recommended from your Local Grids
+          </p>
+          <p className="text-xs text-muted-foreground">
+            You already map these searches on Google Maps. Track where you rank
+            for them in regular Google results too.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+          {gridKeywords.map((item) => (
+            <label
+              key={item.keyword}
+              className="flex items-center gap-2 text-sm"
+              title={`Mapped for ${item.businessName}`}
+            >
+              <Checkbox
+                checked={gridPicked.has(item.keyword)}
+                onCheckedChange={(checked) =>
+                  setGridPicked((current) => {
+                    const next = new Set(current);
+                    if (checked) next.add(item.keyword);
+                    else next.delete(item.keyword);
+                    return next;
+                  })
+                }
+              />
+              {item.keyword}
+            </label>
+          ))}
+        </div>
+      </div>
+    ) : null;
+
+  // The views with no domain suggestions can still save the grid picks.
+  const fallbackFooter = (idleLabel: string) => (
+    <DialogFooter>
+      {gridPicked.size > 0 ? (
+        <>
+          <Button variant="ghost" onClick={onClose}>
+            Skip
+          </Button>
+          <Button onClick={handleAdd} pending={addMutation.isPending}>
+            Save {gridPicked.size} keyword{gridPicked.size !== 1 ? "s" : ""}
+          </Button>
+        </>
+      ) : (
+        <Button onClick={onClose}>{idleLabel}</Button>
+      )}
+    </DialogFooter>
+  );
 
   if (!labsSupported) {
     return (
@@ -238,9 +314,8 @@ export function KeywordSuggestionStep({
           title="Add keywords manually"
           description="Ranked-keyword suggestions aren't available for this country. Continue and add the keywords you want to track manually."
         />
-        <DialogFooter>
-          <Button onClick={onClose}>Continue</Button>
-        </DialogFooter>
+        {gridSection}
+        {fallbackFooter("Continue")}
       </>
     );
   }
@@ -263,9 +338,8 @@ export function KeywordSuggestionStep({
           title="Couldn't fetch keywords"
           description="You can skip this step and add keywords manually later."
         />
-        <DialogFooter>
-          <Button onClick={onClose}>Skip</Button>
-        </DialogFooter>
+        {gridSection}
+        {fallbackFooter("Skip")}
       </>
     );
   }
@@ -277,9 +351,8 @@ export function KeywordSuggestionStep({
           title="No rankings found"
           description={`We couldn't find any keywords ${domain} currently ranks for. You can add keywords manually.`}
         />
-        <DialogFooter>
-          <Button onClick={onClose}>Skip</Button>
-        </DialogFooter>
+        {gridSection}
+        {fallbackFooter("Skip")}
       </>
     );
   }
@@ -290,6 +363,8 @@ export function KeywordSuggestionStep({
         title="Choose keywords to track"
         description={`We found ${data.length} keywords ${domain} ranks for.`}
       />
+
+      {gridSection}
 
       <DataTable
         table={table}
@@ -306,6 +381,7 @@ export function KeywordSuggestionStep({
       <DialogFooter className="items-center sm:justify-between">
         <p className="text-xs text-muted-foreground">
           {selectedCount} of {data.length} selected
+          {gridPicked.size > 0 ? ` + ${gridPicked.size} from Local Grids` : ""}
         </p>
         <div className="flex items-center gap-2">
           <Button variant="ghost" onClick={onClose}>
@@ -314,9 +390,9 @@ export function KeywordSuggestionStep({
           <Button
             onClick={handleAdd}
             pending={addMutation.isPending}
-            disabled={selectedCount === 0}
+            disabled={selectedCount + gridPicked.size === 0}
           >
-            Save Keyword{selectedCount !== 1 ? "s" : ""}
+            Save Keyword{selectedCount + gridPicked.size !== 1 ? "s" : ""}
           </Button>
         </div>
       </DialogFooter>

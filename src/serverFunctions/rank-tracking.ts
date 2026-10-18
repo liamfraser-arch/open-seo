@@ -16,6 +16,8 @@ import {
   getLatestRunSchema,
   estimateCostSchema,
   addKeywordsSchema,
+  getKeywordSerpSchema,
+  getLocalGridSuggestionsSchema,
   removeKeywordsSchema,
   setKeywordsPinnedSchema,
   refreshMetricsSchema,
@@ -254,6 +256,30 @@ export const addTrackingKeywords = createServerFn({ method: "POST" })
         autoCheck?.ok === false && autoCheck.reason === "scheduled_soon",
     };
   });
+
+export const getLocalGridKeywordSuggestions = createServerFn({
+  method: "POST",
+})
+  .middleware(requireProjectContext)
+  .validator(getLocalGridSuggestionsSchema)
+  .handler(({ data, context }) =>
+    RankTrackingKeywordService.suggestLocalGridKeywords(
+      data.configId,
+      context.projectId,
+    ),
+  );
+
+export const getKeywordSerp = createServerFn({ method: "POST" })
+  .middleware(requireProjectContext)
+  .validator(getKeywordSerpSchema)
+  .handler(({ data, context }) =>
+    RankTrackingKeywordService.getKeywordSerp(
+      data.configId,
+      context.projectId,
+      data.keywordId,
+      data.device,
+    ),
+  );
 
 export const removeTrackingKeywords = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)

@@ -182,6 +182,7 @@ function PinButton({
 
 function makeDeviceColumn(
   device: "desktop" | "mobile",
+  scope: { projectId: string; configId: string; domain: string },
 ): ColumnDef<RankTrackingRow> {
   const id = device === "desktop" ? "desktopPosition" : "mobilePosition";
   return {
@@ -197,7 +198,17 @@ function makeDeviceColumn(
     ),
     size: 120,
     maxSize: 140,
-    cell: ({ row }) => <DeviceRankCell result={row.original[device]} />,
+    cell: ({ row }) => (
+      <DeviceRankCell
+        result={row.original[device]}
+        serp={{
+          ...scope,
+          keywordId: row.original.trackingKeywordId,
+          keyword: row.original.keyword,
+          device,
+        }}
+      />
+    ),
     sortUndefined: "last",
   };
 }
@@ -250,6 +261,8 @@ export function useRankTrackingColumns(options: {
   showDesktop: boolean;
   showMobile: boolean;
   domain: string;
+  projectId: string;
+  configId: string;
   selectAnchorRef: MutableRefObject<SelectionAnchor | null>;
   onKeywordClick: (row: RankTrackingRow) => void;
   onSetPinned: (vars: { trackingKeywordId: string; pinned: boolean }) => void;
@@ -259,6 +272,8 @@ export function useRankTrackingColumns(options: {
     showDesktop,
     showMobile,
     domain,
+    projectId,
+    configId,
     selectAnchorRef,
     onKeywordClick,
     onSetPinned,
@@ -268,17 +283,18 @@ export function useRankTrackingColumns(options: {
     ? formatLocationLabel(locationName, 2)
     : undefined;
   return useMemo(() => {
+    const scope = { projectId, configId, domain };
     const cols: ColumnDef<RankTrackingRow>[] = [
       pinnedColumn,
       makeSelectionColumn<RankTrackingRow>(selectAnchorRef),
       makeKeywordColumn(onKeywordClick, onSetPinned),
     ];
     if (showDesktop) {
-      cols.push(makeDeviceColumn("desktop"));
+      cols.push(makeDeviceColumn("desktop", scope));
       cols.push(makeUrlColumn("desktop", domain));
     }
     if (showMobile) {
-      cols.push(makeDeviceColumn("mobile"));
+      cols.push(makeDeviceColumn("mobile", scope));
       cols.push(makeUrlColumn("mobile", domain));
     }
     cols.push(makeVolumeColumn(locationLabel), kdColumn, cpcColumn);
@@ -293,6 +309,8 @@ export function useRankTrackingColumns(options: {
     showDesktop,
     showMobile,
     domain,
+    projectId,
+    configId,
     selectAnchorRef,
     onKeywordClick,
     onSetPinned,

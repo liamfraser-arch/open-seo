@@ -126,12 +126,22 @@ export async function fetchLiveSerp(input: {
   };
 }
 
+/** How many organic results a rank check keeps for the SERP preview. */
+const SERP_PREVIEW_RESULTS = 10;
+
 export interface RankCheckResult {
   keywordId: string;
   keyword: string;
   position: number | null;
   url: string | null;
   serpFeatures: string[];
+  /** The first page of organic results, for showing the SERP in context. */
+  topResults: Array<{
+    position: number;
+    url: string;
+    domain: string | null;
+    title: string | null;
+  }>;
 }
 
 function buildRankCheckResult(
@@ -156,6 +166,19 @@ function buildRankCheckResult(
       : null,
     url: organicMatch?.url ?? null,
     serpFeatures: [...new Set(items.map((item) => item.type).filter(Boolean))],
+    topResults: items.flatMap((item) => {
+      const position = item.rank_group ?? null;
+      if (item.type !== "organic" || !item.url) return [];
+      if (position === null || position > SERP_PREVIEW_RESULTS) return [];
+      return [
+        {
+          position,
+          url: item.url,
+          domain: item.domain ?? null,
+          title: item.title ?? null,
+        },
+      ];
+    }),
   };
 }
 
@@ -353,6 +376,8 @@ export async function fetchRankCheckTaskResult(input: {
 export async function fetchLocalSerp(input: {
   keyword: string;
   locationCoordinate?: string;
+  /** A canonical DataForSEO location name; Maps accepts it in place of coordinates. */
+  locationName?: string;
   languageCode: string;
   searchType: "maps" | "local_finder";
   device: "desktop" | "mobile";
@@ -368,6 +393,7 @@ export async function fetchLocalSerp(input: {
       {
         keyword: input.keyword,
         location_coordinate: input.locationCoordinate,
+        location_name: input.locationName,
         language_code: input.languageCode,
         device: input.device,
         os,

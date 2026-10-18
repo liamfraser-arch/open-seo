@@ -16,6 +16,7 @@ import { organizationContextQueryOptions } from "@/client/features/team/organiza
 import { switchOrganization } from "@/serverFunctions/organization";
 import { clearLastProjectId } from "@/client/lib/active-project";
 import {
+  agencyNavGroup,
   connectNavGroup,
   getProjectNavGroups,
 } from "@/client/navigation/items";
@@ -127,10 +128,12 @@ export function Sidebar({
   // the sidebar has its full shape from the first paint instead of growing
   // once projects load. The placeholder rows never render these links.
   const navPlaceholder = projectId === null && projectPending;
-  const navGroups =
-    projectId !== null || navPlaceholder
+  const navGroups = [
+    agencyNavGroup,
+    ...(projectId !== null || navPlaceholder
       ? getProjectNavGroups(projectId ?? "")
-      : [connectNavGroup];
+      : [connectNavGroup]),
+  ];
   const { pathname } = useLocation();
   const { setOpenMobile } = useSidebar();
   // SAM is hidden from navigation: the chat route is only reachable by URL,
@@ -187,7 +190,9 @@ export function Sidebar({
                           icon={icon}
                           label={label}
                           linkProps={linkProps}
-                          placeholder={navPlaceholder}
+                          placeholder={
+                            navPlaceholder && group !== agencyNavGroup
+                          }
                         />
                       );
                     })}
