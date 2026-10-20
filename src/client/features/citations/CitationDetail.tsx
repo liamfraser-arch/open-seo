@@ -2,11 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ExternalLink, Play, Trash2 } from "lucide-react";
+import { Play, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "@/client/components/ConfirmDialog";
 import { QueryError } from "@/client/components/QueryState";
 import { SkeletonPage } from "@/client/components/SkeletonPresets";
-import { Badge } from "@/client/components/ui/badge";
 import { Button } from "@/client/components/ui/button";
 import { Card } from "@/client/components/ui/card";
 import { Skeleton } from "@/client/components/ui/skeleton";
@@ -22,11 +21,12 @@ import {
   Table,
   TableBody,
   TableCard,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/client/components/ui/table";
+import { ReferenceNap } from "@/client/features/citations/ListingNap";
+import { ResultRow } from "@/client/features/citations/ResultRow";
 import { formatCitationCheckCost } from "@/client/features/citations/format";
 import { formatRunDate } from "@/client/features/local-grid/format";
 import { getStandardErrorMessage } from "@/client/lib/error-messages";
@@ -42,18 +42,6 @@ import {
 const POLL_MS = 4000;
 
 type RunDetail = Awaited<ReturnType<typeof getCitationRun>>;
-type Status = RunDetail["results"][number]["status"];
-
-const STATUS_BADGE: Record<
-  Status,
-  { label: string; variant: "success" | "secondary" | "outline" }
-> = {
-  found: { label: "Listed", variant: "success" },
-  missing: { label: "Not found", variant: "secondary" },
-  error: { label: "Search failed", variant: "outline" },
-  pending: { label: "Waiting", variant: "outline" },
-  checking: { label: "Checking…", variant: "outline" },
-};
 
 export function CitationDetail({
   projectId,
@@ -300,7 +288,7 @@ function RunView({
   /** Staff only: searches again for the directories whose search failed. */
   onRetry?: { run: () => void; pending: boolean };
 }) {
-  const { run, results } = detail;
+  const { run, results, reference } = detail;
 
   return (
     <div className="space-y-4">
@@ -350,6 +338,7 @@ function RunView({
           Searched {run.total - run.unsettled} of {run.total} directories…
         </p>
       ) : null}
+      <ReferenceNap reference={reference} />
       <TableCard>
         <Table>
           <TableHeader>
@@ -361,56 +350,15 @@ function RunView({
           </TableHeader>
           <TableBody>
             {results.map((result) => (
-              <ResultRow key={result.id} result={result} />
+              <ResultRow
+                key={result.id}
+                result={result}
+                reference={reference}
+              />
             ))}
           </TableBody>
         </Table>
       </TableCard>
     </div>
-  );
-}
-
-function ResultRow({ result }: { result: RunDetail["results"][number] }) {
-  const badge = STATUS_BADGE[result.status];
-  const changed =
-    result.previousStatus &&
-    result.previousStatus !== result.status &&
-    result.status !== "pending" &&
-    result.status !== "checking";
-
-  return (
-    <TableRow>
-      <TableCell className="font-medium">{result.directoryName}</TableCell>
-      <TableCell>
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={badge.variant}>{badge.label}</Badge>
-          {changed ? (
-            <span className="text-xs text-muted-foreground">
-              was{" "}
-              {STATUS_BADGE[
-                result.previousStatus ?? "missing"
-              ].label.toLowerCase()}
-            </span>
-          ) : null}
-        </div>
-      </TableCell>
-      <TableCell>
-        <ul className="space-y-1">
-          {result.listings.map((listing) => (
-            <li key={listing.url}>
-              <a
-                href={listing.url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex max-w-md items-center gap-1.5 text-sm text-primary hover:underline"
-              >
-                <span className="truncate">{listing.title ?? listing.url}</span>
-                <ExternalLink className="size-3.5 shrink-0" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      </TableCell>
-    </TableRow>
   );
 }

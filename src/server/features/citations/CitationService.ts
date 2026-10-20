@@ -2,6 +2,12 @@ import type { BillingCustomerContext } from "@/server/billing/subscription";
 import { CitationRepository } from "@/server/features/citations/CitationRepository";
 import { LocalGridRepository } from "@/server/features/local-grid/LocalGridRepository";
 import { createDataforseoClient } from "@/server/lib/dataforseo";
+import { readListingNap } from "@/server/features/citations/listingNap";
+import {
+  hasReference,
+  lookupReferenceNap,
+  referenceOf,
+} from "@/server/features/citations/referenceNap";
 import { AppError, asAppError } from "@/server/lib/errors";
 import {
   CITATION_DIRECTORIES,
@@ -12,6 +18,7 @@ import {
   type CitationDirectory,
 } from "@/shared/citations";
 import { LOCATION_OPTIONS } from "@/shared/keyword-locations";
+import { compareNap } from "@/shared/nap";
 import type { CreateCitationCheckInput } from "@/types/schemas/citations";
 
 // Small batches because DataForSEO answers bursts of live searches with
@@ -125,9 +132,19 @@ async function listBusinessCandidates(projectId: string) {
 async function createCheck(
   project: { id: string; locationCode: number; languageCode: string },
   input: CreateCitationCheckInput,
+  billingCustomer: BillingCustomerContext,
 ) {
   const id = crypto.randomUUID();
   const locationCode = input.locationCode ?? project.locationCode;
+  const reference = await lookupReferenceNap(
+    project,
+    {
+      businessName: input.businessName,
+      city: input.city ?? null,
+      locationCode,
+    },
+    billingCustomer,
+  );
   await CitationRepository.createCheck({
     id,
     projectId: project.id,
@@ -137,6 +154,9 @@ async function createCheck(
     languageCode:
       LOCATION_OPTIONS.find((option) => option.code === locationCode)
         ?.languageCode ?? project.languageCode,
+    referenceName: reference?.name ?? null,
+    referenceAddress: reference?.address ?? null,
+    referencePhone: reference?.phone ?? null,
     createdAt: new Date().toISOString(),
   });
   return { id };
@@ -241,11 +261,20 @@ async function processRun(input: {
           directory,
           input.billingCustomer,
         );
+        // Reading a listing page is a plain fetch, so it costs no credits.
+        const naps = await Promise.all(
+          listings.map((listing) => readListingNap(listing.url)),
+        );
+        const checkedAt = new Date().toISOString();
         await CitationRepository.insertListings(
-          listings.map((listing) => ({
+          listings.map((listing, index) => ({
             id: crypto.randomUUID(),
             resultId: row.id,
             ...listing,
+            foundName: naps[index].name,
+            foundAddress: naps[index].address,
+            foundPhone: naps[index].phone,
+            napCheckedAt: checkedAt,
           })),
         );
         await CitationRepository.settleResult(row.id, {
@@ -318,6 +347,7 @@ async function getCheckDetail(projectId: string, checkId: string) {
 async function getRunDetail(projectId: string, runId: string) {
   const run = await CitationRepository.getRun(projectId, runId);
   if (!run) throw new AppError("NOT_FOUND", "Citation run not found");
+  const check = await requireCheck(projectId, run.checkId);
 
   // The previous finished run, so each directory can show what changed.
   const history = await CitationRepository.listRuns(projectId, run.checkId);
@@ -340,6 +370,7 @@ async function getRunDetail(projectId: string, runId: string) {
 
   return {
     run: summarizeRun(run, results),
+    reference: referenceOf(check),
     results: own.flatMap((result) => {
       const directory = directoryByKey(result.directory);
       if (!directory) return [];
@@ -352,7 +383,24 @@ async function getRunDetail(projectId: string, runId: string) {
           previousStatus: previousStatus.get(result.directory) ?? null,
           listings: listings
             .filter((listing) => listing.resultId === result.id)
-            .map((listing) => ({ url: listing.url, title: listing.title })),
+            .map((listing) => ({
+              url: listing.url,
+              title: listing.title,
+              found: {
+                name: listing.foundName,
+                address: listing.foundAddress,
+                phone: listing.foundPhone,
+              },
+              // Null for listings from runs that predate NAP checking.
+              nap:
+                listing.napCheckedAt && hasReference(check)
+                  ? compareNap(referenceOf(check), {
+                      name: listing.foundName,
+                      address: listing.foundAddress,
+                      phone: listing.foundPhone,
+                    })
+                  : null,
+            })),
         },
       ];
     }),

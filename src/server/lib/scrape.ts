@@ -173,6 +173,15 @@ export async function readPages(
   return { pages, blocked: pages.length === 0 };
 }
 
+/** The raw HTML of one page, or null when it is blocked or unreadable. */
+export async function fetchPageHtml(rawUrl: string): Promise<string | null> {
+  try {
+    return await fetchText(await normalizeAndValidateStartUrl(rawUrl));
+  } catch {
+    return null; // blocked or unparseable URL
+  }
+}
+
 /**
  * Lists a site's page URLs without reading them: the homepage plus what the
  * sitemap declares, capped at `limit`. Lets an agent see what a site has and

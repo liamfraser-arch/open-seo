@@ -21,6 +21,10 @@ export const citationChecks = pgTable(
     city: text("city"),
     locationCode: integer("location_code").notNull(),
     languageCode: text("language_code").notNull(),
+    // The details on the Google Business Profile, which listings are compared to.
+    referenceName: text("reference_name"),
+    referenceAddress: text("reference_address"),
+    referencePhone: text("reference_phone"),
     createdAt: text("created_at").notNull(),
   },
   (table) => [index("citation_checks_project_idx").on(table.projectId)],
@@ -82,6 +86,12 @@ export const citationListings = pgTable(
       .references(() => citationResults.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
     title: text("title"),
+    // What the listing page shows; null where it showed nothing.
+    foundName: text("found_name"),
+    foundAddress: text("found_address"),
+    foundPhone: text("found_phone"),
+    // Set once the page was fetched; null for listings never read.
+    napCheckedAt: text("nap_checked_at"),
   },
   (table) => [index("citation_listings_result_idx").on(table.resultId)],
 );

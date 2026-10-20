@@ -24,7 +24,11 @@ export const createCitationCheck = createServerFn({ method: "POST" })
   .middleware(requireProjectContext)
   .validator(createCitationCheckSchema)
   .handler(async ({ data, context }) => {
-    const result = await CitationService.createCheck(context.project, data);
+    const result = await CitationService.createCheck(
+      context.project,
+      data,
+      context,
+    );
     waitUntil(
       captureServerEvent({
         distinctId: context.userId,
